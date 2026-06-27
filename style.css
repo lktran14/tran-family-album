@@ -195,6 +195,7 @@ button:active {
 /* Visible focus ring on all interactive elements */
 a:focus-visible,
 button:focus-visible,
+.header-pill:focus-visible,
 .album-card:focus-visible,
 .photo-tile:focus-visible {
   outline: 3px solid var(--brand-primary);
@@ -309,83 +310,197 @@ button:focus-visible,
 }
 
 /* -------------------------------------------------------------------------- */
-/* View 1: Album List                                                         */
+/* View 1: Album List (reference layout)                                      */
 /* -------------------------------------------------------------------------- */
 
+#view-album-list {
+  margin-left: calc(-1 * var(--space-4));
+  margin-right: calc(-1 * var(--space-4));
+  width: calc(100% + 2 * var(--space-4));
+}
+
 .album-list-header {
-  text-align: center;
-  margin-bottom: 24px;
-  padding: 8px 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  background: var(--bg-surface);
+  padding: var(--space-5) var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
 .album-list-title {
   font-family: var(--font-display);
   font-size: var(--text-title);
   font-weight: var(--weight-title);
-  margin: 0 0 var(--space-2);
+  margin: 0;
   color: var(--text-primary);
+  text-align: center;
 }
 
-.album-list-subtitle {
-  font-family: var(--font-body);
-  font-size: var(--text-caption);
-  font-weight: var(--weight-body);
-  color: var(--text-secondary);
-  margin: 0;
+.header-pill {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  background: var(--chrome);
+  color: var(--text-inverse);
+  transition: background-color 0.15s ease, transform var(--transition-fast);
+}
+
+.header-pill:active {
+  transform: translateY(-50%) scale(0.98);
+  background: var(--chrome-hover);
+}
+
+.header-pill--left {
+  left: 0;
+  padding: 0 var(--space-5) 0 var(--space-4);
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+}
+
+.header-pill--right {
+  right: 0;
+  padding: 0 var(--space-4) 0 var(--space-5);
+  border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+}
+
+.header-pill-icon {
+  display: block;
+  flex-shrink: 0;
 }
 
 .album-cards {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 0 16px;
+  gap: var(--space-5);
+  padding: 0 var(--space-4);
 }
 
 .album-card {
   display: block;
   width: 100%;
-  background: var(--color-surface);
+  background: var(--bg-surface);
   border-radius: var(--radius-lg);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
-  text-decoration: none;
   color: inherit;
   border: none;
   padding: 0;
   text-align: left;
   cursor: pointer;
-  transition: transform 0.1s ease;
+  transition: transform var(--transition-fast);
 }
 
 .album-card:active {
   transform: scale(0.98);
 }
 
-.album-card-cover {
+/* Collage: 1 large + 2 stacked, tight gutters */
+.album-card-collage {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 3px;
+  aspect-ratio: 16 / 10;
+  background: var(--grid-gap-color);
+}
+
+.album-card-collage-main {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.album-card-collage-stack {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 3px;
+  min-height: 0;
+}
+
+.album-card-collage-main img,
+.album-card-collage-stack img {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.album-card-expand {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--text-inverse);
+  pointer-events: none;
 }
 
 .album-card-info {
-  padding: 16px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+  padding: var(--space-4);
 }
 
 .album-card-name {
+  grid-column: 1;
+  grid-row: 1;
   font-family: var(--font-display);
-  font-size: 1.125rem; /* 18px — ~10% smaller than reference heading */
-  font-weight: var(--weight-title);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-heading);
   color: var(--text-primary);
-  margin: 0 0 var(--space-1);
+  margin: 0;
+}
+
+.album-card-chevron {
+  grid-column: 2;
+  grid-row: 1;
+  font-size: 1.75rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--text-primary);
 }
 
 .album-card-count {
+  grid-column: 1;
+  grid-row: 2;
   font-family: var(--font-body);
   font-size: var(--text-caption);
   font-weight: var(--weight-body);
   color: var(--text-secondary);
   margin: 0;
+}
+
+.album-card-avatars {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.album-card-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 2px solid var(--bg-surface);
+  margin-left: -10px;
+}
+
+.album-card-avatar:first-child {
+  margin-left: 0;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -594,20 +709,26 @@ button:focus-visible,
     padding: 32px;
   }
 
+  #view-album-list {
+    margin-left: calc(-1 * var(--space-6));
+    margin-right: calc(-1 * var(--space-6));
+    width: calc(100% + 2 * var(--space-6));
+  }
+
   .album-cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    padding: 0;
+    gap: var(--space-5);
+    padding: 0 var(--space-6);
+  }
+
+  .album-list-header {
+    padding: var(--space-5) var(--space-6);
   }
 
   .photo-grid {
     gap: 16px;
     padding: 0;
-  }
-
-  .album-list-header {
-    margin-bottom: 32px;
   }
 
   .lightbox-nav--prev {

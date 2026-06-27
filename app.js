@@ -12,14 +12,13 @@ const albums = [
   {
     id: "family",
     name: "Family",
-    cover: "https://picsum.photos/seed/family/600/400",
+    cover: "./photos/family/P1000200.png",
     photos: [
-      { src: "https://picsum.photos/seed/fam1/800/600", caption: "Christmas 2024" },
-      { src: "https://picsum.photos/seed/fam2/800/600", caption: "Summer BBQ" },
-      { src: "https://picsum.photos/seed/fam3/800/600", caption: "" },
-      { src: "https://picsum.photos/seed/fam4/800/600", caption: "Birthday party" },
-      { src: "https://picsum.photos/seed/fam5/800/600", caption: "" },
-      { src: "https://picsum.photos/seed/fam6/800/600", caption: "New Year's Eve" },
+      { src: "./photos/family/P1000200.png", caption: "Swimming, September 1992" },
+      { src: "./photos/family/P1000202.png", caption: "Balcony, June 2002" },
+      { src: "./photos/family/P1000201.png", caption: "Three generations, June 2002" },
+      { src: "./photos/family/P1000199.png", caption: "" },
+      { src: "./photos/family/P1000205.png", caption: "Blackpool beach" },
     ],
   },
   {
@@ -112,6 +111,17 @@ function getCurrentAlbum() {
 /* -------------------------------------------------------------------------- */
 
 /**
+ * Return up to three photo sources for the album card collage.
+ */
+function getCollageSources(album) {
+  const sources = album.photos.slice(0, 3).map((photo) => photo.src);
+  while (sources.length < 3) {
+    sources.push(album.cover);
+  }
+  return sources;
+}
+
+/**
  * Render all album cards on the home view.
  */
 function renderAlbumList() {
@@ -120,6 +130,8 @@ function renderAlbumList() {
   albums.forEach((album) => {
     const count = album.photos.length;
     const countLabel = count === 1 ? "1 Photo" : `${count} Photos`;
+    const [mainSrc, topSrc, bottomSrc] = getCollageSources(album);
+    const avatarSources = getCollageSources(album).slice(0, 3);
 
     const card = document.createElement("button");
     card.className = "album-card";
@@ -127,18 +139,53 @@ function renderAlbumList() {
     card.setAttribute("aria-label", `Open ${album.name} album, ${countLabel}`);
 
     card.innerHTML = `
-      <img
-        class="album-card-cover"
-        src="${album.cover}"
-        alt="${album.name} album cover"
-        width="600"
-        height="400"
-        loading="lazy"
-        decoding="async"
-      />
+      <div class="album-card-collage">
+        <div class="album-card-collage-main">
+          <img
+            src="${mainSrc}"
+            alt=""
+            width="600"
+            height="400"
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="album-card-expand" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+              <path d="M8 3H3v5M16 3h5v5M16 21h5v-5M8 21H3v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+        <div class="album-card-collage-stack">
+          <img
+            src="${topSrc}"
+            alt=""
+            width="300"
+            height="200"
+            loading="lazy"
+            decoding="async"
+          />
+          <img
+            src="${bottomSrc}"
+            alt=""
+            width="300"
+            height="200"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
       <div class="album-card-info">
         <h2 class="album-card-name">${album.name}</h2>
+        <span class="album-card-chevron" aria-hidden="true">›</span>
         <p class="album-card-count">${countLabel}</p>
+        <div class="album-card-avatars" aria-hidden="true">
+          ${avatarSources
+            .map(
+              (src) =>
+                `<img class="album-card-avatar" src="${src}" alt="" width="32" height="32" loading="lazy" decoding="async" />`
+            )
+            .join("")}
+        </div>
       </div>
     `;
 

@@ -13,6 +13,11 @@ const ASSETS_TO_CACHE = [
   "./app.js",
   "./icons/icon-192.svg",
   "./icons/icon-512.svg",
+  "./photos/family/P1000199.png",
+  "./photos/family/P1000200.png",
+  "./photos/family/P1000201.png",
+  "./photos/family/P1000202.png",
+  "./photos/family/P1000205.png",
 ];
 
 self.addEventListener("install", (event) => {
