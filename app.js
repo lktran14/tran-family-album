@@ -233,8 +233,6 @@ function renderPhotoGrid() {
       <img
         src="${photo.src}"
         alt="${alt}"
-        width="800"
-        height="600"
         loading="lazy"
         decoding="async"
       />
