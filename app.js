@@ -23,7 +23,7 @@ const albums = [
   },
   {
     id: "garden",
-    name: "Garden",
+    name: "Engagement and Wedding",
     cover: "https://picsum.photos/seed/garden/600/400",
     photos: [
       { src: "https://picsum.photos/seed/gard1/800/600", caption: "Spring blooms" },
