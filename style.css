@@ -386,7 +386,7 @@ button:focus-visible,
   display: block;
   width: 100%;
   background: var(--bg-surface);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-sm);
   box-shadow: var(--shadow-card);
   overflow: hidden;
   color: inherit;
@@ -546,10 +546,9 @@ button:focus-visible,
   text-align: center;
 }
 
-/* Rounded-top panel — grid sits flush below header */
+/* Grid panel — flush below header, square corners */
 .photo-grid-panel {
   background: var(--grid-gap-color);
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
   overflow: hidden;
 }
 
@@ -582,7 +581,7 @@ button:focus-visible,
   width: 100%;
   display: block;
   object-fit: cover;
-  border-radius: var(--radius-sm);
+  border-radius: 0;
 }
 
 .photo-tile--tall img {
