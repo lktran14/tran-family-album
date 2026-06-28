@@ -561,22 +561,9 @@ button:focus-visible,
 
 .photo-tile img {
   width: 100%;
-  height: 100%;
+  height: auto;
   display: block;
-  object-fit: cover;
   border-radius: 0;
-}
-
-.photo-tile--tall {
-  aspect-ratio: 3 / 4;
-}
-
-.photo-tile--wide {
-  aspect-ratio: 4 / 3;
-}
-
-.photo-tile--square {
-  aspect-ratio: 1;
 }
 
 /* -------------------------------------------------------------------------- */

@@ -215,12 +215,9 @@ function renderPhotoGrid() {
   photoGridSubtitle.textContent = count === 1 ? "1 Photo" : `${count} Photos`;
   photoGridContainer.innerHTML = "";
 
-  const aspectPatterns = ["tall", "wide", "square", "wide", "tall", "square"];
-
   album.photos.forEach((photo, index) => {
-    const aspect = aspectPatterns[index % aspectPatterns.length];
     const tile = document.createElement("button");
-    tile.className = `photo-tile photo-tile--${aspect}`;
+    tile.className = "photo-tile";
     tile.type = "button";
     tile.setAttribute(
       "aria-label",
