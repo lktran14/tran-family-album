@@ -122,13 +122,18 @@ const albums = [
         ],
       },
       {
-        heading: "Finland & Russia",
+        heading: "Helsinki",
         photos: [
           { src: "./photos/holidays/IMG_5618.png", caption: "Helsinki Cathedral, June 2018" },
           { src: "./photos/holidays/IMG_5631.png", caption: "Kauppatori market, June 2018" },
           { src: "./photos/holidays/IMG_5643.png", caption: "Saaristo restaurant, June 2018" },
           { src: "./photos/holidays/IMG_5658.png", caption: "SkyWheel Helsinki, June 2018" },
           { src: "./photos/holidays/IMG_5669.png", caption: "Sibelius Monument, June 2018" },
+        ],
+      },
+      {
+        heading: "Russia",
+        photos: [
           { src: "./photos/holidays/IMG_5730.png", caption: "Saint Isaac's Cathedral, June 2018" },
           { src: "./photos/holidays/IMG_5732.png", caption: "Saint Isaac's Cathedral dome, June 2018" },
           { src: "./photos/holidays/IMG_5778.png", caption: "World Cup banner, June 2018" },
