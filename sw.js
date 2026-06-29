@@ -3,7 +3,7 @@
  * Caches all app assets for offline use.
  */
 
-const CACHE_NAME = "tran-family-album-v5";
+const CACHE_NAME = "tran-family-album-v6";
 
 const ASSETS_TO_CACHE = [
   "./",
@@ -18,6 +18,14 @@ const ASSETS_TO_CACHE = [
   "./photos/family/P1000201.png",
   "./photos/family/P1000202.png",
   "./photos/family/P1000205.png",
+  "./photos/family/P1000206.png",
+  "./photos/family/P1000207.png",
+  "./photos/family/P1000208.png",
+  "./photos/family/P1000209.png",
+  "./photos/family/P1000210.png",
+  "./photos/family/P1000211.png",
+  "./photos/family/P1000212.png",
+  "./photos/family/P1000213.png",
   "./photos/wedding/P1090318.png",
   "./photos/wedding/P1090320.png",
   "./photos/wedding/P1090321.png",

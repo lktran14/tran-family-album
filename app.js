@@ -23,7 +23,16 @@ const albums = [
     sections: [
       {
         heading: "Tunisia 2006",
-        photos: [],
+        photos: [
+          { src: "./photos/family/P1000206.png", caption: "Snorkelling" },
+          { src: "./photos/family/P1000207.png", caption: "Me & Mum at beach" },
+          { src: "./photos/family/P1000208.png", caption: "Ba Ngoai & Ong Ngoai at front of hotel" },
+          { src: "./photos/family/P1000209.png", caption: "Us at front of hotel" },
+          { src: "./photos/family/P1000210.png", caption: "Me, Mum & Dad at harbour" },
+          { src: "./photos/family/P1000211.png", caption: "Everyone in Mediterranean restaurant" },
+          { src: "./photos/family/P1000212.png", caption: "Jet ski" },
+          { src: "./photos/family/P1000213.png", caption: "Parasailing" },
+        ],
       },
     ],
   },
@@ -165,7 +174,7 @@ function renderAlbumList() {
   albumCardsContainer.innerHTML = "";
 
   albums.forEach((album) => {
-    const count = album.photos.length;
+    const count = getAllPhotos(album).length;
     const countLabel = count === 1 ? "1 Photo" : `${count} Photos`;
     const [mainSrc, topSrc, bottomSrc] = getCollageSources(album);
 
