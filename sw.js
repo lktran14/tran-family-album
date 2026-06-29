@@ -33,7 +33,6 @@ const ASSETS_TO_CACHE = [
   "./photos/wedding/P1090340.png",
   "./photos/wedding/P1090342.png",
   "./photos/wedding/P1090345.png",
-  "./photos/wedding/P1090347.png",
   "./photos/wedding/P1090350.png",
   "./photos/wedding/P1090351.png",
   "./photos/wedding/P1090361.png",
