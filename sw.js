@@ -3,7 +3,7 @@
  * Caches all app assets for offline use.
  */
 
-const CACHE_NAME = "tran-family-album-v14";
+const CACHE_NAME = "tran-family-album-v15";
 
 const ASSETS_TO_CACHE = [
   "./",
@@ -65,6 +65,29 @@ const ASSETS_TO_CACHE = [
   "./photos/holidays/IMG_5778.png",
   "./photos/holidays/IMG_5781.png",
   "./photos/holidays/IMG_5788.png",
+  "./photos/holidays/IMG_5813.png",
+  "./photos/holidays/IMG_5821.png",
+  "./photos/holidays/IMG_5864.png",
+  "./photos/holidays/IMG_5865.png",
+  "./photos/holidays/IMG_5908.png",
+  "./photos/holidays/IMG_5909.png",
+  "./photos/holidays/IMG_5913.png",
+  "./photos/holidays/IMG_5916.png",
+  "./photos/holidays/IMG_5922.png",
+  "./photos/holidays/IMG_5926.png",
+  "./photos/holidays/IMG_5930.png",
+  "./photos/holidays/IMG_5932.png",
+  "./photos/holidays/IMG_5945.png",
+  "./photos/holidays/IMG_5974.png",
+  "./photos/holidays/IMG_5980.png",
+  "./photos/holidays/IMG_5989.png",
+  "./photos/holidays/IMG_6014.png",
+  "./photos/holidays/IMG_6027.png",
+  "./photos/holidays/IMG_6038.png",
+  "./photos/holidays/IMG_6065.png",
+  "./photos/holidays/IMG_6075.png",
+  "./photos/holidays/IMG_6082.png",
+  "./photos/holidays/IMG_6107.png",
 ];
 
 self.addEventListener("install", (event) => {
