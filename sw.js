@@ -3,7 +3,7 @@
  * Caches all app assets for offline use.
  */
 
-const CACHE_NAME = "tran-family-album-v23";
+const CACHE_NAME = "tran-family-album-v24";
 
 const ASSETS_TO_CACHE = [
   "./",
@@ -218,6 +218,31 @@ const ASSETS_TO_CACHE = [
   "./photos/asia-cruise-2019/IMG_7324.png",
   "./photos/asia-cruise-2019/IMG_7335.png",
   "./photos/asia-cruise-2019/IMG_7505.png",
+  "./photos/asia-cruise-2019/IMG_7368.png",
+  "./photos/asia-cruise-2019/IMG_7370.png",
+  "./photos/asia-cruise-2019/IMG_7512.png",
+  "./photos/asia-cruise-2019/IMG_7390.png",
+  "./photos/asia-cruise-2019/IMG_7393.png",
+  "./photos/asia-cruise-2019/IMG_7402.png",
+  "./photos/asia-cruise-2019/IMG_7428.png",
+  "./photos/asia-cruise-2019/IMG_7471.png",
+  "./photos/asia-cruise-2019/IMG_7451.png",
+  "./photos/asia-cruise-2019/IMG_7460.png",
+  "./photos/asia-cruise-2019/IMG_7467.png",
+  "./photos/asia-cruise-2019/IMG_7470.png",
+  "./photos/asia-cruise-2019/IMG_7481.png",
+  "./photos/asia-cruise-2019/IMG_7452.png",
+  "./photos/asia-cruise-2019/IMG_7480.png",
+  "./photos/asia-cruise-2019/IMG_7372.png",
+  "./photos/asia-cruise-2019/IMG_7485.png",
+  "./photos/asia-cruise-2019/IMG_7524.png",
+  "./photos/asia-cruise-2019/IMG_7586.png",
+  "./photos/asia-cruise-2019/IMG_7532.png",
+  "./photos/asia-cruise-2019/IMG_7535.png",
+  "./photos/asia-cruise-2019/IMG_7556.png",
+  "./photos/asia-cruise-2019/IMG_7571.png",
+  "./photos/asia-cruise-2019/IMG_7590.png",
+  "./photos/asia-cruise-2019/IMG_7794.png",
 ];
 
 self.addEventListener("install", (event) => {
