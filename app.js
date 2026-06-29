@@ -45,7 +45,6 @@ const albums = [
       { src: "./photos/wedding/P1090335.png", caption: "", objectPosition: "38% center" },
       { src: "./photos/wedding/P1090361.png", caption: "" },
       { src: "./photos/wedding/P1090318.png", caption: "" },
-      { src: "./photos/wedding/P1090321.png", caption: "" },
       { src: "./photos/wedding/P1090338.png", caption: "" },
       { src: "./photos/wedding/P1090339.png", caption: "", objectPosition: "left center" },
       { src: "./photos/wedding/P1090340.png", caption: "" },
@@ -75,6 +74,14 @@ const albums = [
       { src: "./photos/wedding/P1080852.png", caption: "" },
       { src: "./photos/wedding/P1080860.png", caption: "" },
       { src: "./photos/wedding/P1080878.png", caption: "" },
+    ],
+  },
+  {
+    id: "lien-baby",
+    name: "Lien baby photos",
+    cover: "./photos/lien-baby/P1090321.png",
+    photos: [
+      { src: "./photos/lien-baby/P1090321.png", caption: "" },
     ],
   },
   {
