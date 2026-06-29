@@ -169,6 +169,23 @@ const albums = [
           { src: "./photos/holidays/IMG_6107.png", caption: "Back on board, June 2018" },
         ],
       },
+      {
+        heading: "Stockholm",
+        photos: [
+          { src: "./photos/holidays/IMG_6133.png", caption: "Archipelago island, June 2018" },
+          { src: "./photos/holidays/IMG_6193.png", caption: "Stockholm archipelago, June 2018" },
+          { src: "./photos/holidays/IMG_6220.png", caption: "Waterfront, June 2018" },
+          { src: "./photos/holidays/IMG_6229.png", caption: "On deck, June 2018" },
+          { src: "./photos/holidays/IMG_6257.png", caption: "City Hall courtyard, June 2018" },
+          { src: "./photos/holidays/IMG_6259.png", caption: "City Hall, June 2018" },
+          { src: "./photos/holidays/IMG_6271.png", caption: "Royal Guard, Royal Palace, June 2018" },
+          { src: "./photos/holidays/IMG_6272.png", caption: "Royal Palace, June 2018" },
+          { src: "./photos/holidays/IMG_6302.png", caption: "Vasa Museum, June 2018" },
+          { src: "./photos/holidays/IMG_6313.png", caption: "Harbor, June 2018" },
+          { src: "./photos/holidays/IMG_6327.png", caption: "Ship bow, June 2018" },
+          { src: "./photos/holidays/IMG_6334.png", caption: "Archipelago from ship, June 2018" },
+        ],
+      },
     ],
   },
 ];
