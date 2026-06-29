@@ -99,14 +99,11 @@ const albums = [
   },
   {
     id: "holidays",
-    name: "Holidays",
-    cover: "https://picsum.photos/seed/holiday/600/400",
+    name: "2018 Baltics Cruise",
+    cover: "./photos/holidays/IMG_5280.png",
     photos: [
-      { src: "https://picsum.photos/seed/hol1/800/600", caption: "Seaside 2023" },
-      { src: "https://picsum.photos/seed/hol2/800/600", caption: "" },
-      { src: "https://picsum.photos/seed/hol3/800/600", caption: "Lake District" },
-      { src: "https://picsum.photos/seed/hol4/800/600", caption: "Edinburgh trip" },
-      { src: "https://picsum.photos/seed/hol5/800/600", caption: "" },
+      { src: "./photos/holidays/IMG_5280.png", caption: "On deck, June 2018" },
+      { src: "./photos/holidays/IMG_5294.png", caption: "Amsterdam, June 2018" },
     ],
   },
 ];
