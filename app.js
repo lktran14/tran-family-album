@@ -240,13 +240,13 @@ const albums = [
   {
     id: "asia-cruise-2019",
     name: "2019 Asia cruise",
-    cover: "./photos/asia-cruise-2019/IMG_6689.png",
+    cover: "./photos/asia-cruise-2019/IMG_6814.png",
     photos: [],
     sections: [
       {
         heading: "Tokyo",
         photos: [
-          { src: "./photos/asia-cruise-2019/IMG_6689.png", caption: "Christmas tree, November 2019" },
+          { src: "./photos/asia-cruise-2019/IMG_6814.png", caption: "Nikko Toshogu Shrine, November 2019" },
           { src: "./photos/asia-cruise-2019/IMG_6698.png", caption: "" },
           { src: "./photos/asia-cruise-2019/IMG_6704.png", caption: "Tsukiji market street, November 2019" },
           { src: "./photos/asia-cruise-2019/IMG_6706.png", caption: "Moon Pine, Ueno Park, November 2019" },
@@ -264,7 +264,7 @@ const albums = [
           { src: "./photos/asia-cruise-2019/IMG_6837.png", caption: "Japanese garden, November 2019" },
           { src: "./photos/asia-cruise-2019/IMG_6932.png", caption: "Imperial Palace, November 2019" },
           { src: "./photos/asia-cruise-2019/IMG_6786.png", caption: "Nikko Toshogu Shrine, November 2019" },
-          { src: "./photos/asia-cruise-2019/IMG_6814.png", caption: "Nikko Toshogu Shrine, November 2019" },
+          { src: "./photos/asia-cruise-2019/IMG_6689.png", caption: "Christmas tree, November 2019" },
           { src: "./photos/asia-cruise-2019/IMG_6848.png", caption: "Nikko Toshogu Shrine, November 2019" },
           { src: "./photos/asia-cruise-2019/IMG_6851.png", caption: "Nikko Toshogu Shrine, November 2019" },
           { src: "./photos/asia-cruise-2019/IMG_6859.png", caption: "Japanese lunch, November 2019" },
