@@ -100,6 +100,16 @@ const ASSETS_TO_CACHE = [
   "./photos/holidays/IMG_6313.png",
   "./photos/holidays/IMG_6327.png",
   "./photos/holidays/IMG_6334.png",
+  "./photos/holidays/IMG_6383.png",
+  "./photos/holidays/IMG_6404.png",
+  "./photos/holidays/IMG_6410.png",
+  "./photos/holidays/IMG_6472.png",
+  "./photos/holidays/IMG_6486.png",
+  "./photos/holidays/IMG_6500.png",
+  "./photos/holidays/IMG_6506.png",
+  "./photos/holidays/IMG_6508.png",
+  "./photos/holidays/IMG_6522.png",
+  "./photos/holidays/IMG_6545.png",
 ];
 
 self.addEventListener("install", (event) => {

@@ -108,6 +108,7 @@ const albums = [
         photos: [
           { src: "./photos/holidays/IMG_5280.png", caption: "On deck, June 2018" },
           { src: "./photos/holidays/IMG_5294.png", caption: "Amsterdam, June 2018" },
+          { src: "./photos/holidays/IMG_6383.png", caption: "Cabin balcony, June 2018" },
         ],
       },
       {
@@ -184,6 +185,20 @@ const albums = [
           { src: "./photos/holidays/IMG_6313.png", caption: "Harbor, June 2018" },
           { src: "./photos/holidays/IMG_6327.png", caption: "Ship bow, June 2018" },
           { src: "./photos/holidays/IMG_6334.png", caption: "Archipelago from ship, June 2018" },
+        ],
+      },
+      {
+        heading: "Copenhagen",
+        photos: [
+          { src: "./photos/holidays/IMG_6404.png", caption: "On deck, June 2018" },
+          { src: "./photos/holidays/IMG_6410.png", caption: "Nordhavn, June 2018" },
+          { src: "./photos/holidays/IMG_6472.png", caption: "Harbor, June 2018" },
+          { src: "./photos/holidays/IMG_6486.png", caption: "Axel Towers, June 2018" },
+          { src: "./photos/holidays/IMG_6500.png", caption: "Nyhavn, June 2018" },
+          { src: "./photos/holidays/IMG_6506.png", caption: "Amalienborg Square, June 2018" },
+          { src: "./photos/holidays/IMG_6508.png", caption: "Amalienborg Square, June 2018" },
+          { src: "./photos/holidays/IMG_6522.png", caption: "Little Mermaid, June 2018" },
+          { src: "./photos/holidays/IMG_6545.png", caption: "On deck, June 2018" },
         ],
       },
     ],
