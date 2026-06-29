@@ -487,6 +487,13 @@ function applyPhotoObjectPosition(img, photoOrSrc) {
 }
 
 /**
+ * Format a photo count for display (e.g. "1 Photo", "8 Photos").
+ */
+function formatPhotoCount(count) {
+  return count === 1 ? "1 Photo" : `${count} Photos`;
+}
+
+/**
  * Return all photos in an album, including those in optional sections.
  */
 function getAllPhotos(album) {
@@ -526,7 +533,7 @@ function renderAlbumList() {
 
   albums.forEach((album) => {
     const count = getAllPhotos(album).length;
-    const countLabel = count === 1 ? "1 Photo" : `${count} Photos`;
+    const countLabel = formatPhotoCount(count);
     const [mainSrc, topSrc, bottomSrc] = getCollageSources(album);
 
     const card = document.createElement("button");
@@ -786,7 +793,7 @@ async function renderPhotoGrid() {
   photoGridTitle.textContent = album.name;
   const allPhotos = getAllPhotos(album);
   const count = allPhotos.length;
-  photoGridSubtitle.textContent = count === 1 ? "1 Photo" : `${count} Photos`;
+  photoGridSubtitle.textContent = formatPhotoCount(count);
   photoGridContainer.innerHTML = "";
 
   await preloadOrientations(allPhotos);
@@ -808,7 +815,16 @@ async function renderPhotoGrid() {
       if (section.heading) {
         const heading = document.createElement("h3");
         heading.className = "photo-grid-section-heading";
-        heading.textContent = section.heading;
+
+        const title = document.createElement("span");
+        title.className = "photo-grid-section-heading-title";
+        title.textContent = section.heading;
+
+        const sectionCount = document.createElement("span");
+        sectionCount.className = "photo-grid-section-heading-count";
+        sectionCount.textContent = formatPhotoCount(section.photos.length);
+
+        heading.append(title, sectionCount);
         photoGridContainer.appendChild(heading);
       }
 
