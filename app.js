@@ -20,6 +20,12 @@ const albums = [
       { src: "./photos/family/P1000199.png", caption: "" },
       { src: "./photos/family/P1000205.png", caption: "Blackpool beach" },
     ],
+    sections: [
+      {
+        heading: "Tunisia 2006",
+        photos: [],
+      },
+    ],
   },
   {
     id: "garden",
@@ -120,6 +126,19 @@ function getCurrentAlbum() {
   return getAlbumById(state.currentAlbumId);
 }
 
+/**
+ * Return all photos in an album, including those in optional sections.
+ */
+function getAllPhotos(album) {
+  const photos = [...album.photos];
+  if (album.sections) {
+    album.sections.forEach((section) => {
+      photos.push(...section.photos);
+    });
+  }
+  return photos;
+}
+
 /* -------------------------------------------------------------------------- */
 /* Rendering                                                                  */
 /* -------------------------------------------------------------------------- */
@@ -207,6 +226,36 @@ function renderAlbumList() {
 }
 
 /**
+ * Create a photo tile button for the grid.
+ */
+function createPhotoTile(photo, index, album, totalCount) {
+  const tile = document.createElement("button");
+  tile.className = "photo-tile";
+  tile.type = "button";
+  tile.setAttribute(
+    "aria-label",
+    `View photo ${index + 1} of ${totalCount}${photo.caption ? `: ${photo.caption}` : ""}`
+  );
+
+  const alt = getPhotoAlt(photo, album.name);
+
+  tile.innerHTML = `
+    <img
+      src="${photo.src}"
+      alt="${alt}"
+      loading="lazy"
+      decoding="async"
+    />
+  `;
+
+  tile.addEventListener("click", () => {
+    openLightbox(index);
+  });
+
+  return tile;
+}
+
+/**
  * Render the photo grid for the current album.
  */
 function renderPhotoGrid() {
@@ -216,36 +265,37 @@ function renderPhotoGrid() {
   }
 
   photoGridTitle.textContent = album.name;
-  const count = album.photos.length;
+  const allPhotos = getAllPhotos(album);
+  const count = allPhotos.length;
   photoGridSubtitle.textContent = count === 1 ? "1 Photo" : `${count} Photos`;
   photoGridContainer.innerHTML = "";
 
-  album.photos.forEach((photo, index) => {
-    const tile = document.createElement("button");
-    tile.className = "photo-tile";
-    tile.type = "button";
-    tile.setAttribute(
-      "aria-label",
-      `View photo ${index + 1} of ${album.photos.length}${photo.caption ? `: ${photo.caption}` : ""}`
+  let photoIndex = 0;
+
+  album.photos.forEach((photo) => {
+    photoGridContainer.appendChild(
+      createPhotoTile(photo, photoIndex, album, count)
     );
-
-    const alt = getPhotoAlt(photo, album.name);
-
-    tile.innerHTML = `
-      <img
-        src="${photo.src}"
-        alt="${alt}"
-        loading="lazy"
-        decoding="async"
-      />
-    `;
-
-    tile.addEventListener("click", () => {
-      openLightbox(index);
-    });
-
-    photoGridContainer.appendChild(tile);
+    photoIndex += 1;
   });
+
+  if (album.sections) {
+    album.sections.forEach((section) => {
+      if (section.heading) {
+        const heading = document.createElement("h3");
+        heading.className = "photo-grid-section-heading";
+        heading.textContent = section.heading;
+        photoGridContainer.appendChild(heading);
+      }
+
+      section.photos.forEach((photo) => {
+        photoGridContainer.appendChild(
+          createPhotoTile(photo, photoIndex, album, count)
+        );
+        photoIndex += 1;
+      });
+    });
+  }
 }
 
 /**
@@ -257,7 +307,8 @@ function updateLightboxContent() {
     return;
   }
 
-  const photo = album.photos[state.lightboxPhotoIndex];
+  const allPhotos = getAllPhotos(album);
+  const photo = allPhotos[state.lightboxPhotoIndex];
   if (!photo) {
     return;
   }
@@ -373,8 +424,9 @@ function lightboxPrevPhoto() {
     return;
   }
 
+  const allPhotos = getAllPhotos(album);
   state.lightboxPhotoIndex =
-    (state.lightboxPhotoIndex - 1 + album.photos.length) % album.photos.length;
+    (state.lightboxPhotoIndex - 1 + allPhotos.length) % allPhotos.length;
   updateLightboxContent();
 }
 
@@ -387,8 +439,9 @@ function lightboxNextPhoto() {
     return;
   }
 
+  const allPhotos = getAllPhotos(album);
   state.lightboxPhotoIndex =
-    (state.lightboxPhotoIndex + 1) % album.photos.length;
+    (state.lightboxPhotoIndex + 1) % allPhotos.length;
   updateLightboxContent();
 }
 
