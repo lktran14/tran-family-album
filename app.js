@@ -25,11 +25,13 @@ const albums = [
     id: "garden",
     name: "Engagement and Wedding",
     cover: "./photos/wedding/P1090349.png",
+    listPreviewMain: "./photos/wedding/P1090344.png",
     photos: [
+      { src: "./photos/wedding/P1090335.png", caption: "" },
+      { src: "./photos/wedding/P1090361.png", caption: "" },
       { src: "./photos/wedding/P1090318.png", caption: "" },
       { src: "./photos/wedding/P1090320.png", caption: "" },
       { src: "./photos/wedding/P1090321.png", caption: "" },
-      { src: "./photos/wedding/P1090335.png", caption: "" },
       { src: "./photos/wedding/P1090338.png", caption: "" },
       { src: "./photos/wedding/P1090339.png", caption: "" },
       { src: "./photos/wedding/P1090340.png", caption: "" },
@@ -42,7 +44,6 @@ const albums = [
       { src: "./photos/wedding/P1090349.png", caption: "" },
       { src: "./photos/wedding/P1090350.png", caption: "" },
       { src: "./photos/wedding/P1090351.png", caption: "" },
-      { src: "./photos/wedding/P1090361.png", caption: "" },
     ],
   },
   {
@@ -127,11 +128,15 @@ function getCurrentAlbum() {
  * Return up to three photo sources for the album card collage.
  */
 function getCollageSources(album) {
-  const sources = album.photos.slice(0, 3).map((photo) => photo.src);
-  while (sources.length < 3) {
-    sources.push(album.cover);
+  const photos = album.photos.map((photo) => photo.src);
+  const main = album.listPreviewMain || photos[0] || album.cover;
+  const stack = photos.filter((src) => src !== main).slice(0, 2);
+
+  while (stack.length < 2) {
+    stack.push(album.cover);
   }
-  return sources;
+
+  return [main, stack[0], stack[1]];
 }
 
 /**
