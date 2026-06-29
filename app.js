@@ -395,6 +395,17 @@ const albums = [
           { src: "./photos/asia-cruise-2019/IMG_7590.png", caption: "Chiang Kai-shek Memorial Hall, December 2019" },
         ],
       },
+      {
+        heading: "Hong Kong",
+        photos: [
+          { src: "./photos/asia-cruise-2019/IMG_7817.png", caption: "View from Victoria Peak, July 2019" },
+          { src: "./photos/asia-cruise-2019/IMG_7821.png", caption: "Victoria Peak, July 2019" },
+          { src: "./photos/asia-cruise-2019/IMG_7826.png", caption: "Jumbo Floating Restaurant, July 2019" },
+          { src: "./photos/asia-cruise-2019/IMG_7828.png", caption: "Aberdeen Harbour, July 2019" },
+          { src: "./photos/asia-cruise-2019/IMG_7829.png", caption: "Aberdeen Harbour, July 2019" },
+          { src: "./photos/asia-cruise-2019/IMG_7847.png", caption: "Food court, July 2019" },
+        ],
+      },
     ],
   },
 ];
