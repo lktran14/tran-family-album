@@ -403,6 +403,8 @@ const state = {
   currentAlbumId: null,
   lightboxOpen: false,
   lightboxPhotoIndex: 0,
+  menuOpen: false,
+  scrollToSectionId: null,
 };
 
 /** Bumps on each grid render so stale async renders can bail out. */
@@ -424,6 +426,11 @@ const lightboxImage = document.getElementById("lightbox-image");
 const lightboxClose = document.getElementById("lightbox-close");
 const lightboxPrev = document.getElementById("lightbox-prev");
 const lightboxNext = document.getElementById("lightbox-next");
+const navMenu = document.getElementById("nav-menu");
+const navMenuList = document.getElementById("nav-menu-list");
+const navMenuClose = document.getElementById("nav-menu-close");
+const navMenuBackdrop = document.getElementById("nav-menu-backdrop");
+const menuButtons = document.querySelectorAll(".menu-button");
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                    */
@@ -487,6 +494,25 @@ function applyPhotoObjectPosition(img, photoOrSrc) {
  */
 function formatPhotoCount(count) {
   return count === 1 ? "1 Photo" : `${count} Photos`;
+}
+
+/**
+ * Build a stable DOM id for a section heading within an album.
+ */
+function getSectionDomId(albumId, heading) {
+  const slug = heading
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return `section-${albumId}-${slug}`;
+}
+
+/**
+ * Lock page scroll when an overlay is open.
+ */
+function updateBodyScrollLock() {
+  document.body.style.overflow =
+    state.lightboxOpen || state.menuOpen ? "hidden" : "";
 }
 
 /**
@@ -811,6 +837,7 @@ async function renderPhotoGrid() {
       if (section.heading) {
         const heading = document.createElement("h3");
         heading.className = "photo-grid-section-heading";
+        heading.id = getSectionDomId(album.id, section.heading);
 
         const title = document.createElement("span");
         title.className = "photo-grid-section-heading-title";
@@ -831,6 +858,17 @@ async function renderPhotoGrid() {
         album,
         count
       );
+    });
+  }
+
+  if (state.scrollToSectionId) {
+    const sectionId = state.scrollToSectionId;
+    state.scrollToSectionId = null;
+    requestAnimationFrame(() => {
+      document.getElementById(sectionId)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     });
   }
 }
@@ -888,9 +926,31 @@ function navigateToAlbum(albumId) {
  */
 function navigateToHome() {
   closeLightbox();
+  closeMenu();
   state.currentAlbumId = null;
   window.location.hash = "#/";
   showView("album-list");
+}
+
+/**
+ * Navigate to a section within an album and scroll it into view.
+ */
+function navigateToSection(albumId, sectionHeading) {
+  closeMenu();
+  closeLightbox();
+
+  const sectionId = getSectionDomId(albumId, sectionHeading);
+
+  if (state.currentAlbumId === albumId) {
+    document.getElementById(sectionId)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+    return;
+  }
+
+  state.scrollToSectionId = sectionId;
+  window.location.hash = `#/album/${albumId}`;
 }
 
 /**
@@ -917,6 +977,98 @@ function handleHashChange() {
 }
 
 /* -------------------------------------------------------------------------- */
+/* Navigation menu                                                            */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Populate the slide-out menu with all albums and their subsections.
+ */
+function renderMenu() {
+  navMenuList.innerHTML = "";
+
+  albums.forEach((album) => {
+    const group = document.createElement("div");
+    group.className = "nav-menu-group";
+
+    const albumButton = document.createElement("button");
+    albumButton.className = "nav-menu-item";
+    albumButton.type = "button";
+    albumButton.textContent = album.name;
+    if (state.currentAlbumId === album.id) {
+      albumButton.classList.add("nav-menu-item--active");
+    }
+    albumButton.addEventListener("click", () => {
+      closeMenu();
+      navigateToAlbum(album.id);
+    });
+    group.appendChild(albumButton);
+
+    if (album.sections?.length) {
+      const sublist = document.createElement("ul");
+      sublist.className = "nav-menu-subsections";
+
+      album.sections.forEach((section) => {
+        if (!section.heading) {
+          return;
+        }
+
+        const item = document.createElement("li");
+        const subButton = document.createElement("button");
+        subButton.className = "nav-menu-subitem";
+        subButton.type = "button";
+        subButton.textContent = section.heading;
+        subButton.addEventListener("click", () => {
+          navigateToSection(album.id, section.heading);
+        });
+        item.appendChild(subButton);
+        sublist.appendChild(item);
+      });
+
+      group.appendChild(sublist);
+    }
+
+    navMenuList.appendChild(group);
+  });
+}
+
+function setMenuExpanded(expanded) {
+  menuButtons.forEach((button) => {
+    button.setAttribute("aria-expanded", expanded ? "true" : "false");
+  });
+}
+
+function openMenu() {
+  closeLightbox();
+  renderMenu();
+  state.menuOpen = true;
+  navMenu.classList.add("nav-menu--open");
+  navMenu.setAttribute("aria-hidden", "false");
+  setMenuExpanded(true);
+  updateBodyScrollLock();
+  navMenuClose.focus();
+}
+
+function closeMenu() {
+  if (!state.menuOpen) {
+    return;
+  }
+
+  state.menuOpen = false;
+  navMenu.classList.remove("nav-menu--open");
+  navMenu.setAttribute("aria-hidden", "true");
+  setMenuExpanded(false);
+  updateBodyScrollLock();
+}
+
+function toggleMenu() {
+  if (state.menuOpen) {
+    closeMenu();
+  } else {
+    openMenu();
+  }
+}
+
+/* -------------------------------------------------------------------------- */
 /* Lightbox                                                                   */
 /* -------------------------------------------------------------------------- */
 
@@ -935,7 +1087,7 @@ function openLightbox(photoIndex) {
 
   lightbox.classList.add("lightbox--open");
   lightbox.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
+  updateBodyScrollLock();
 }
 
 /**
@@ -945,7 +1097,7 @@ function closeLightbox() {
   state.lightboxOpen = false;
   lightbox.classList.remove("lightbox--open");
   lightbox.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
+  updateBodyScrollLock();
 }
 
 /**
@@ -1023,6 +1175,12 @@ function bindEvents() {
   lightboxPrev.addEventListener("click", lightboxPrevPhoto);
   lightboxNext.addEventListener("click", lightboxNextPhoto);
 
+  menuButtons.forEach((button) => {
+    button.addEventListener("click", toggleMenu);
+  });
+  navMenuClose.addEventListener("click", closeMenu);
+  navMenuBackdrop.addEventListener("click", closeMenu);
+
   lightbox.addEventListener("touchstart", handleTouchStart, { passive: true });
   lightbox.addEventListener("touchend", handleTouchEnd, { passive: true });
 
@@ -1030,6 +1188,17 @@ function bindEvents() {
   lightbox.addEventListener("click", (event) => {
     if (event.target === lightbox) {
       closeLightbox();
+    }
+  });
+
+  window.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") {
+      return;
+    }
+    if (state.lightboxOpen) {
+      closeLightbox();
+    } else if (state.menuOpen) {
+      closeMenu();
     }
   });
 
