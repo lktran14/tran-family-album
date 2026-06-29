@@ -574,11 +574,6 @@ function renderAlbumList() {
             loading="lazy"
             decoding="async"
           />
-          <span class="album-card-expand" aria-hidden="true">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-              <path d="M8 3H3v5M16 3h5v5M16 21h5v-5M8 21H3v-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
         </div>
         <div class="album-card-collage-stack">
           <img
