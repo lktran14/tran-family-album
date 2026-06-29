@@ -98,6 +98,40 @@ const albums = [
     ],
   },
   {
+    id: "italy-1987",
+    name: "Italy 1987",
+    cover: "./photos/italy-1987/P1090214.png",
+    photos: [],
+    sections: [
+      {
+        heading: "Lake Garda",
+        photos: [
+          { src: "./photos/italy-1987/P1090214.png", caption: "Lake Garda, 1987" },
+          { src: "./photos/italy-1987/P1090216.png", caption: "" },
+          { src: "./photos/italy-1987/P1090228.png", caption: "" },
+          { src: "./photos/italy-1987/P1090219.png", caption: "Snake Island" },
+        ],
+      },
+      {
+        heading: "Lido di Jesolo",
+        photos: [
+          { src: "./photos/italy-1987/P1090217.png", caption: "Lido di Jesolo, 1987" },
+          { src: "./photos/italy-1987/P1090223.png", caption: "" },
+          { src: "./photos/italy-1987/P1000657.png", caption: "" },
+          { src: "./photos/italy-1987/P1090218.png", caption: "" },
+          { src: "./photos/italy-1987/P1090221.png", caption: "" },
+          { src: "./photos/italy-1987/P1090225.png", caption: "" },
+          { src: "./photos/italy-1987/P1090229.png", caption: "Aquileia" },
+          { src: "./photos/italy-1987/P1090244.png", caption: "" },
+          { src: "./photos/italy-1987/P1090220.png", caption: "" },
+          { src: "./photos/italy-1987/P1090222.png", caption: "" },
+          { src: "./photos/italy-1987/P1090227.png", caption: "" },
+          { src: "./photos/italy-1987/P1090224.png", caption: "" },
+        ],
+      },
+    ],
+  },
+  {
     id: "holidays",
     name: "2018 Baltics Cruise",
     cover: "./photos/holidays/IMG_5280.png",
@@ -313,7 +347,7 @@ function getAllPhotos(album) {
  * Return up to three photo sources for the album card collage.
  */
 function getCollageSources(album) {
-  const photos = album.photos.map((photo) => photo.src);
+  const photos = getAllPhotos(album).map((photo) => photo.src);
   const main = album.listPreviewMain || photos[0] || album.cover;
   const stack = photos.filter((src) => src !== main).slice(0, 2);
 
