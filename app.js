@@ -541,42 +541,49 @@ function renderAlbumList() {
     card.type = "button";
     card.setAttribute("aria-label", `Open ${album.name} album, ${countLabel}`);
 
+    /* Inner wrapper: Safari shrink-wraps direct button children to content width */
     card.innerHTML = `
-      <div class="album-card-collage">
-        <div class="album-card-collage-main">
-          <img
-            src="${mainSrc}"
-            alt=""
-            width="600"
-            height="400"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        <div class="album-card-collage-stack">
-          <img
-            src="${topSrc}"
-            alt=""
-            width="300"
-            height="200"
-            loading="lazy"
-            decoding="async"
-          />
-          <img
-            src="${bottomSrc}"
-            alt=""
-            width="300"
-            height="200"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-      </div>
-      <div class="album-card-info">
-        <h2 class="album-card-name">${album.name}</h2>
-        <span class="album-card-chevron" aria-hidden="true">›</span>
-        <p class="album-card-count">${countLabel}</p>
-      </div>
+      <span class="album-card-inner">
+        <span class="album-card-collage">
+          <span class="album-card-collage-main">
+            <img
+              src="${mainSrc}"
+              alt=""
+              width="600"
+              height="400"
+              loading="lazy"
+              decoding="async"
+            />
+          </span>
+          <span class="album-card-collage-stack">
+            <span class="album-card-collage-cell">
+              <img
+                src="${topSrc}"
+                alt=""
+                width="300"
+                height="200"
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+            <span class="album-card-collage-cell">
+              <img
+                src="${bottomSrc}"
+                alt=""
+                width="300"
+                height="200"
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+          </span>
+        </span>
+        <span class="album-card-info">
+          <span class="album-card-name">${album.name}</span>
+          <span class="album-card-chevron" aria-hidden="true">›</span>
+          <span class="album-card-count">${countLabel}</span>
+        </span>
+      </span>
     `;
 
     card.querySelectorAll(".album-card-collage img").forEach((img, i) => {
