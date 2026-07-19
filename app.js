@@ -1118,24 +1118,62 @@ function lightboxNextPhoto() {
 
 let touchStartX = 0;
 let touchStartY = 0;
+/** True only for a single-finger swipe that has not been cancelled by pinch/zoom. */
+let swipeActive = false;
+
+/**
+ * Whether the page is currently pinch-zoomed (browser zoom).
+ * Panning a zoomed photo must not advance the carousel.
+ */
+function isLightboxZoomed() {
+  return Boolean(window.visualViewport && window.visualViewport.scale > 1.01);
+}
+
+function cancelLightboxSwipe() {
+  swipeActive = false;
+}
 
 function handleTouchStart(event) {
-  if (!state.lightboxOpen || event.touches.length !== 1) {
+  if (!state.lightboxOpen) {
     return;
   }
+
+  // Multi-touch (pinch zoom) — never treat as a carousel swipe
+  if (event.touches.length !== 1 || isLightboxZoomed()) {
+    cancelLightboxSwipe();
+    return;
+  }
+
+  swipeActive = true;
   touchStartX = event.touches[0].clientX;
   touchStartY = event.touches[0].clientY;
 }
 
+function handleTouchMove(event) {
+  // A second finger joined mid-gesture (pinch) — abort swipe
+  if (event.touches.length > 1) {
+    cancelLightboxSwipe();
+  }
+}
+
 function handleTouchEnd(event) {
-  if (!state.lightboxOpen || event.changedTouches.length !== 1) {
+  if (!state.lightboxOpen || !swipeActive || event.changedTouches.length !== 1) {
+    cancelLightboxSwipe();
     return;
   }
+
+  // Still zoomed, or another finger remains down — do not navigate
+  if (isLightboxZoomed() || event.touches.length > 0) {
+    cancelLightboxSwipe();
+    return;
+  }
+
+  cancelLightboxSwipe();
 
   const deltaX = event.changedTouches[0].clientX - touchStartX;
   const deltaY = event.changedTouches[0].clientY - touchStartY;
 
-  // Ignore mostly vertical swipes
+  // Ignore mostly vertical swipes and small movements
   if (Math.abs(deltaX) <= 50 || Math.abs(deltaX) < Math.abs(deltaY)) {
     return;
   }
@@ -1164,7 +1202,10 @@ function bindEvents() {
   navMenuBackdrop.addEventListener("click", closeMenu);
 
   lightbox.addEventListener("touchstart", handleTouchStart, { passive: true });
+  lightbox.addEventListener("touchmove", handleTouchMove, { passive: true });
   lightbox.addEventListener("touchend", handleTouchEnd, { passive: true });
+  lightbox.addEventListener("touchcancel", cancelLightboxSwipe, { passive: true });
+
 
   // Close lightbox when tapping the dark backdrop (not the image or buttons)
   lightbox.addEventListener("click", (event) => {
