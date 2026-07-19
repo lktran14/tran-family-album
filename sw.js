@@ -3,7 +3,7 @@
  * Caches all app assets for offline use.
  */
 
-const CACHE_NAME = "tran-family-album-v29";
+const CACHE_NAME = "tran-family-album-v30";
 
 const ASSETS_TO_CACHE = [
   "./",
@@ -228,8 +228,56 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+/**
+ * App shell files change often during development; prefer network so
+ * HTML/JS/CSS updates are not stuck behind a stale cache-first entry.
+ */
+function isAppShellRequest(url) {
+  const path = url.pathname;
+  return (
+    path === "/" ||
+    path.endsWith("/") ||
+    path.endsWith(".html") ||
+    path.endsWith("/app.js") ||
+    path.endsWith("/style.css") ||
+    path.endsWith("/sw.js") ||
+    path.endsWith("/manifest.json")
+  );
+}
+
+function networkFirst(request) {
+  return fetch(request)
+    .then((response) => {
+      if (response && response.status === 200 && response.type === "basic") {
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(request, responseClone);
+        });
+      }
+      return response;
+    })
+    .catch(() => caches.match(request));
+}
+
+function cacheFirst(request) {
+  return caches.match(request).then((cached) => {
+    if (cached) {
+      return cached;
+    }
+    return fetch(request).then((response) => {
+      if (!response || response.status !== 200 || response.type !== "basic") {
+        return response;
+      }
+      const responseClone = response.clone();
+      caches.open(CACHE_NAME).then((cache) => {
+        cache.put(request, responseClone);
+      });
+      return response;
+    });
+  });
+}
+
 self.addEventListener("fetch", (event) => {
-  // Network-first for remote placeholder images; cache-first for local assets
   const url = new URL(event.request.url);
 
   if (url.origin !== self.location.origin) {
@@ -239,21 +287,10 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) {
-        return cached;
-      }
-      return fetch(event.request).then((response) => {
-        if (!response || response.status !== 200 || response.type !== "basic") {
-          return response;
-        }
-        const responseClone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseClone);
-        });
-        return response;
-      });
-    })
-  );
+  if (isAppShellRequest(url)) {
+    event.respondWith(networkFirst(event.request));
+    return;
+  }
+
+  event.respondWith(cacheFirst(event.request));
 });

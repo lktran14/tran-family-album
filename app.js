@@ -1197,10 +1197,68 @@ const PIN_HASH_HEX =
 
 const UNLOCK_STORAGE_KEY = "unlocked";
 
-const pinLockForm = document.getElementById("pin-lock-form");
-const pinInput = document.getElementById("pin-input");
-const pinLockError = document.getElementById("pin-lock-error");
-const pinLockSubmit = document.getElementById("pin-lock-submit");
+let pinLockForm = null;
+let pinInput = null;
+let pinLockError = null;
+let pinLockSubmit = null;
+
+/**
+ * Ensure PIN lock markup exists (covers stale HTML cached by the service worker).
+ */
+function ensurePinLockDom() {
+  pinLockForm = document.getElementById("pin-lock-form");
+  pinInput = document.getElementById("pin-input");
+  pinLockError = document.getElementById("pin-lock-error");
+  pinLockSubmit = document.getElementById("pin-lock-submit");
+
+  if (pinLockForm && pinInput && pinLockError && pinLockSubmit) {
+    return;
+  }
+
+  const existing = document.getElementById("pin-lock");
+  if (existing) {
+    existing.remove();
+  }
+
+  const wrapper = document.createElement("div");
+  wrapper.id = "pin-lock";
+  wrapper.className = "pin-lock";
+  wrapper.setAttribute("role", "dialog");
+  wrapper.setAttribute("aria-modal", "true");
+  wrapper.setAttribute("aria-labelledby", "pin-lock-title");
+  wrapper.setAttribute("aria-describedby", "pin-lock-hint");
+  wrapper.innerHTML = `
+    <form id="pin-lock-form" class="pin-lock-panel" autocomplete="off">
+      <h1 id="pin-lock-title" class="pin-lock-title">Tran Family Album</h1>
+      <p id="pin-lock-hint" class="pin-lock-hint">Enter the 4-digit PIN to continue</p>
+      <label class="pin-lock-label" for="pin-input">PIN</label>
+      <input
+        id="pin-input"
+        class="pin-lock-input"
+        type="password"
+        inputmode="numeric"
+        pattern="[0-9]{4}"
+        maxlength="4"
+        minlength="4"
+        autocomplete="one-time-code"
+        enterkeyhint="done"
+        required
+        aria-invalid="false"
+        aria-describedby="pin-lock-error"
+      />
+      <p id="pin-lock-error" class="pin-lock-error" role="alert" hidden></p>
+      <button id="pin-lock-submit" class="pin-lock-submit" type="submit">
+        Unlock
+      </button>
+    </form>
+  `;
+  document.body.prepend(wrapper);
+
+  pinLockForm = document.getElementById("pin-lock-form");
+  pinInput = document.getElementById("pin-input");
+  pinLockError = document.getElementById("pin-lock-error");
+  pinLockSubmit = document.getElementById("pin-lock-submit");
+}
 
 /**
  * Hash a string with SHA-256 via the Web Crypto API; return lowercase hex.
@@ -1286,6 +1344,7 @@ async function handlePinSubmit(event) {
 }
 
 function bindPinLock() {
+  ensurePinLockDom();
   pinLockForm.addEventListener("submit", handlePinSubmit);
   pinInput.addEventListener("input", () => {
     clearPinError();
