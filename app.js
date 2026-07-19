@@ -1,7 +1,7 @@
 /**
  * Tran Family Album — Main Application Logic
  * Hash-based routing: #/ (album list), #/album/:id (photo grid)
- * In-memory state only — no localStorage
+ * PIN unlock flag is stored in localStorage; album state stays in memory
  */
 
 /* -------------------------------------------------------------------------- */
@@ -1188,6 +1188,113 @@ function bindEvents() {
 }
 
 /* -------------------------------------------------------------------------- */
+/* PIN lock                                                                   */
+/* -------------------------------------------------------------------------- */
+
+/** SHA-256 of the correct 4-digit PIN (plaintext is never stored). */
+const PIN_HASH_HEX =
+  "6606753e5a126d7068012a526d44c3eb2f7fcd09d5faeb30c77dbfd87ca7e758";
+
+const UNLOCK_STORAGE_KEY = "unlocked";
+
+const pinLockForm = document.getElementById("pin-lock-form");
+const pinInput = document.getElementById("pin-input");
+const pinLockError = document.getElementById("pin-lock-error");
+const pinLockSubmit = document.getElementById("pin-lock-submit");
+
+/**
+ * Hash a string with SHA-256 via the Web Crypto API; return lowercase hex.
+ */
+async function sha256Hex(value) {
+  const data = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(digest))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+/**
+ * Constant-time-ish hex compare to avoid leaking hash length via early exit.
+ */
+function hexEquals(a, b) {
+  if (a.length !== b.length) {
+    return false;
+  }
+  let mismatch = 0;
+  for (let i = 0; i < a.length; i += 1) {
+    mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
+
+function isDeviceUnlocked() {
+  try {
+    return localStorage.getItem(UNLOCK_STORAGE_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function markDeviceUnlocked() {
+  try {
+    localStorage.setItem(UNLOCK_STORAGE_KEY, "true");
+  } catch {
+    /* private mode / quota — still unlock this session */
+  }
+  document.documentElement.classList.add("unlocked");
+}
+
+function showPinError(message) {
+  pinLockError.hidden = false;
+  pinLockError.textContent = message;
+  pinInput.setAttribute("aria-invalid", "true");
+}
+
+function clearPinError() {
+  pinLockError.hidden = true;
+  pinLockError.textContent = "";
+  pinInput.setAttribute("aria-invalid", "false");
+}
+
+async function handlePinSubmit(event) {
+  event.preventDefault();
+  clearPinError();
+
+  const pin = pinInput.value.trim();
+  if (!/^\d{4}$/.test(pin)) {
+    showPinError("Enter a 4-digit PIN.");
+    pinInput.focus();
+    return;
+  }
+
+  pinLockSubmit.disabled = true;
+  try {
+    const enteredHash = await sha256Hex(pin);
+    if (!hexEquals(enteredHash, PIN_HASH_HEX)) {
+      showPinError("Incorrect PIN. Try again.");
+      pinInput.value = "";
+      pinInput.focus();
+      return;
+    }
+    markDeviceUnlocked();
+    init();
+  } catch {
+    showPinError("Unable to verify PIN. Try again.");
+  } finally {
+    pinLockSubmit.disabled = false;
+  }
+}
+
+function bindPinLock() {
+  pinLockForm.addEventListener("submit", handlePinSubmit);
+  pinInput.addEventListener("input", () => {
+    clearPinError();
+    pinInput.value = pinInput.value.replace(/\D/g, "").slice(0, 4);
+  });
+  pinInput.focus();
+}
+
+/* -------------------------------------------------------------------------- */
 /* Initialise                                                                 */
 /* -------------------------------------------------------------------------- */
 
@@ -1197,4 +1304,13 @@ function init() {
   handleHashChange();
 }
 
-init();
+function startApp() {
+  if (isDeviceUnlocked()) {
+    markDeviceUnlocked();
+    init();
+    return;
+  }
+  bindPinLock();
+}
+
+startApp();

@@ -21,8 +21,51 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./style.css">
+
+  <!-- Restore unlock state before paint to avoid a PIN flash -->
+  <script>
+    try {
+      if (localStorage.getItem("unlocked") === "true") {
+        document.documentElement.classList.add("unlocked");
+      }
+    } catch (e) { /* ignore */ }
+  </script>
 </head>
 <body>
+  <!-- PIN lock — shown until unlocked (see app.js) -->
+  <div
+    id="pin-lock"
+    class="pin-lock"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="pin-lock-title"
+    aria-describedby="pin-lock-hint"
+  >
+    <form id="pin-lock-form" class="pin-lock-panel" autocomplete="off">
+      <h1 id="pin-lock-title" class="pin-lock-title">Tran Family Album</h1>
+      <p id="pin-lock-hint" class="pin-lock-hint">Enter the 4-digit PIN to continue</p>
+      <label class="pin-lock-label" for="pin-input">PIN</label>
+      <input
+        id="pin-input"
+        class="pin-lock-input"
+        type="password"
+        inputmode="numeric"
+        pattern="[0-9]{4}"
+        maxlength="4"
+        minlength="4"
+        autocomplete="one-time-code"
+        enterkeyhint="done"
+        required
+        aria-invalid="false"
+        aria-describedby="pin-lock-error"
+      />
+      <p id="pin-lock-error" class="pin-lock-error" role="alert" hidden></p>
+      <button id="pin-lock-submit" class="pin-lock-submit" type="submit">
+        Unlock
+      </button>
+    </form>
+  </div>
+
   <div class="app">
     <div class="view-container">
 
