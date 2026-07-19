@@ -3,7 +3,7 @@
  * Caches all app assets for offline use.
  */
 
-const CACHE_NAME = "tran-family-album-v30";
+const CACHE_NAME = "tran-family-album-v31";
 
 const ASSETS_TO_CACHE = [
   "./",
@@ -11,8 +11,9 @@ const ASSETS_TO_CACHE = [
   "./manifest.json",
   "./style.css",
   "./app.js",
-  "./icons/icon-192.svg",
-  "./icons/icon-512.svg",
+  "./icons/icon-192.png",
+  "./icons/icon-512.png",
+  "./icons/apple-touch-icon.png",
   "./photos/family/P1000199.png",
   "./photos/family/P1000200.png",
   "./photos/family/P1000201.png",
