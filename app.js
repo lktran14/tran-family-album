@@ -1089,6 +1089,7 @@ const navMenuList = document.getElementById("nav-menu-list");
 const navMenuClose = document.getElementById("nav-menu-close");
 const navMenuBackdrop = document.getElementById("nav-menu-backdrop");
 const menuButtons = document.querySelectorAll(".menu-button");
+const photoGridHeader = document.querySelector(".photo-grid-header");
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                    */
@@ -1565,6 +1566,7 @@ function showView(viewName) {
   }
 
   window.scrollTo(0, 0);
+  setAlbumChromePinned(false);
 }
 
 /**
@@ -1866,8 +1868,69 @@ function handleTouchEnd(event) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Event listeners                                                            */
+/* Album chrome — reveal Back and Menu while scrolling up                    */
 /* -------------------------------------------------------------------------- */
+
+/** Upward movement (px) before the floating buttons appear. */
+const ALBUM_CHROME_THRESHOLD = 12;
+
+let albumChromePinned = false;
+let albumChromeAnchorY = window.scrollY;
+let albumChromeTicking = false;
+
+function setAlbumChromePinned(pinned) {
+  if (albumChromePinned === pinned) {
+    return;
+  }
+
+  albumChromePinned = pinned;
+  photoGridHeader.classList.toggle("photo-grid-header--chrome", pinned);
+}
+
+/**
+ * Show Back and Menu once the header has scrolled away and the user
+ * moves back up. Hide them again on the way down, or when the header
+ * itself is on screen.
+ */
+function syncAlbumChrome() {
+  albumChromeTicking = false;
+
+  const y = window.scrollY;
+  const delta = y - albumChromeAnchorY;
+  const onAlbum =
+    viewPhotoGrid.classList.contains("view--active") && !state.lightboxOpen;
+
+  if (!onAlbum) {
+    setAlbumChromePinned(false);
+    albumChromeAnchorY = y;
+    return;
+  }
+
+  const headerOffscreen = photoGridHeader.getBoundingClientRect().bottom <= 0;
+
+  if (!headerOffscreen) {
+    setAlbumChromePinned(false);
+    albumChromeAnchorY = y;
+    return;
+  }
+
+  if (delta <= -ALBUM_CHROME_THRESHOLD) {
+    setAlbumChromePinned(true);
+    albumChromeAnchorY = y;
+  } else if (delta >= ALBUM_CHROME_THRESHOLD) {
+    setAlbumChromePinned(false);
+    albumChromeAnchorY = y;
+  }
+}
+
+function onAlbumChromeScroll() {
+  if (albumChromeTicking) {
+    return;
+  }
+
+  albumChromeTicking = true;
+  requestAnimationFrame(syncAlbumChrome);
+}
 
 function bindEvents() {
   backButton.addEventListener("click", navigateToHome);
@@ -1906,6 +1969,7 @@ function bindEvents() {
   });
 
   window.addEventListener("hashchange", handleHashChange);
+  window.addEventListener("scroll", onAlbumChromeScroll, { passive: true });
 }
 
 /* -------------------------------------------------------------------------- */
