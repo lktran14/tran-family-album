@@ -262,6 +262,7 @@ const albums = [
           { src: "./photos/asia-cruise-2016/IMG_2951.jpg", caption: "Food stall, 22 January 2016" },
           { src: "./photos/asia-cruise-2016/IMG_2975.jpg", caption: "On deck, Singapore, 23 January 2016" },
           { src: "./photos/asia-cruise-2016/IMG_3019.jpg", caption: "On board, 23 January 2016" },
+          { src: "./photos/asia-cruise-2016/IMG_4374.jpg", caption: "Chinese New Year display, 7 February 2016" },
         ],
       },
       {
@@ -295,6 +296,9 @@ const albums = [
           { src: "./photos/asia-cruise-2016/IMG_3360.jpg", caption: "Formal night, 28 January 2016" },
           { src: "./photos/asia-cruise-2016/IMG_3368.jpg", caption: "Formal night, 28 January 2016" },
           { src: "./photos/asia-cruise-2016/IMG_3375.jpg", caption: "Formal night, 28 January 2016" },
+          { src: "./photos/asia-cruise-2016/IMG_3863.jpg", caption: "On board, 2 February 2016" },
+          { src: "./photos/asia-cruise-2016/IMG_3885.jpg", caption: "Formal night, 2 February 2016" },
+          { src: "./photos/asia-cruise-2016/IMG_3887.jpg", caption: "Formal night, 2 February 2016" },
         ],
       },
       {
@@ -334,14 +338,6 @@ const albums = [
           { src: "./photos/asia-cruise-2016/IMG_3772.jpg", caption: "Nha Trang, 1 February 2016" },
           { src: "./photos/asia-cruise-2016/IMG_3783.jpg", caption: "Nha Trang, 1 February 2016" },
           { src: "./photos/asia-cruise-2016/IMG_3811.jpg", caption: "Whale model, 1 February 2016" },
-        ],
-      },
-      {
-        heading: "On board",
-        photos: [
-          { src: "./photos/asia-cruise-2016/IMG_3863.jpg", caption: "On board, 2 February 2016" },
-          { src: "./photos/asia-cruise-2016/IMG_3885.jpg", caption: "Formal night, 2 February 2016" },
-          { src: "./photos/asia-cruise-2016/IMG_3887.jpg", caption: "Formal night, 2 February 2016" },
         ],
       },
       {
@@ -388,12 +384,6 @@ const albums = [
           { src: "./photos/asia-cruise-2016/P1090875.jpg", caption: "Elephant camp, Koh Samui, 5 February 2016" },
           { src: "./photos/asia-cruise-2016/IMG_4346.jpg", caption: "Big Buddha, Koh Samui, 5 February 2016" },
           { src: "./photos/asia-cruise-2016/IMG_4352.jpg", caption: "Big Buddha, Koh Samui, 5 February 2016" },
-        ],
-      },
-      {
-        heading: "Singapore",
-        photos: [
-          { src: "./photos/asia-cruise-2016/IMG_4374.jpg", caption: "Chinese New Year display, 7 February 2016" },
         ],
       },
     ],
