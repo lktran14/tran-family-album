@@ -275,6 +275,25 @@ const albums = [
   },
 
   {
+    id: "liens-graduation-2012",
+    name: "Lien's Graduation 2012",
+    cover: "./photos/liens-graduation-2012/IMG_0625.jpg",
+    listPreviewMain: "./photos/liens-graduation-2012/IMG_0625.jpg",
+    photos: [
+      { src: "./photos/liens-graduation-2012/IMG_0613.jpg", caption: "28 June 2012" },
+      { src: "./photos/liens-graduation-2012/IMG_0615.jpg", caption: "28 June 2012" },
+      { src: "./photos/liens-graduation-2012/IMG_0623.jpg", caption: "28 June 2012" },
+      { src: "./photos/liens-graduation-2012/IMG_0624.jpg", caption: "28 June 2012" },
+      { src: "./photos/liens-graduation-2012/IMG_0625.jpg", caption: "28 June 2012" },
+      { src: "./photos/liens-graduation-2012/IMG_0636.jpg", caption: "28 June 2012" },
+      { src: "./photos/liens-graduation-2012/IMG_0637.jpg", caption: "28 June 2012" },
+      { src: "./photos/liens-graduation-2012/IMG_0649.jpg", caption: "28 June 2012" },
+      { src: "./photos/liens-graduation-2012/IMG_0648.jpg", caption: "28 June 2012" },
+      { src: "./photos/liens-graduation-2012/IMG_0643.jpg", caption: "28 June 2012" },
+    ],
+  },
+
+  {
     id: "lien-baby",
     name: "Lien baby photos",
     cover: "./photos/lien-baby/P1090387.png",
@@ -515,14 +534,26 @@ function getAllPhotos(album) {
  */
 function getCollageSources(album) {
   const photos = getAllPhotos(album).map((photo) => photo.src);
-  const main = album.listPreviewMain || photos[0] || album.cover;
+  const main = album.listPreviewMain || photos[0] || album.cover || "";
   const stack = photos.filter((src) => src !== main).slice(0, 2);
 
   while (stack.length < 2) {
-    stack.push(album.cover);
+    stack.push(album.cover || "");
   }
 
   return [main, stack[0], stack[1]];
+}
+
+/**
+ * Album-card thumbnail markup. Empty albums omit the image so the card
+ * shows the collage background instead of a broken source.
+ */
+function collageImageMarkup(src, width, height) {
+  if (!src) {
+    return "";
+  }
+
+  return `<img src="${src}" alt="" width="${width}" height="${height}" loading="lazy" decoding="async" />`;
 }
 
 /**
@@ -546,35 +577,14 @@ function renderAlbumList() {
       <span class="album-card-inner">
         <span class="album-card-collage">
           <span class="album-card-collage-main">
-            <img
-              src="${mainSrc}"
-              alt=""
-              width="600"
-              height="400"
-              loading="lazy"
-              decoding="async"
-            />
+            ${collageImageMarkup(mainSrc, 600, 400)}
           </span>
           <span class="album-card-collage-stack">
             <span class="album-card-collage-cell">
-              <img
-                src="${topSrc}"
-                alt=""
-                width="300"
-                height="200"
-                loading="lazy"
-                decoding="async"
-              />
+              ${collageImageMarkup(topSrc, 300, 200)}
             </span>
             <span class="album-card-collage-cell">
-              <img
-                src="${bottomSrc}"
-                alt=""
-                width="300"
-                height="200"
-                loading="lazy"
-                decoding="async"
-              />
+              ${collageImageMarkup(bottomSrc, 300, 200)}
             </span>
           </span>
         </span>
