@@ -777,6 +777,8 @@ const albums = [
       { src: "./photos/family/P1000201.png", caption: "Three generations, June 2002" },
       { src: "./photos/family/P1000199.png", caption: "" },
       { src: "./photos/family/P1000205.png", caption: "Blackpool beach" },
+      { src: "./photos/beach-holidays/P1100119.jpg", caption: "10 March 2016" },
+      { src: "./photos/beach-holidays/P1100125.jpg", caption: "10 March 2016" },
     ],
     sections: [
       {
@@ -861,12 +863,6 @@ const albums = [
           { src: "./photos/beach-holidays/IMG_2710.jpg", caption: "Tenerife, 8 July 2015" },
           { src: "./photos/beach-holidays/P1100127.jpg", caption: "Tenerife, 2015" },
           { src: "./photos/beach-holidays/P1100128.jpg", caption: "Tenerife, 2015" },
-        ],
-      },
-      {
-        photos: [
-          { src: "./photos/beach-holidays/P1100119.jpg", caption: "10 March 2016" },
-          { src: "./photos/beach-holidays/P1100125.jpg", caption: "10 March 2016" },
         ],
       },
     ],
