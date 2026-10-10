@@ -1080,7 +1080,8 @@ const photoGridTitle = document.getElementById("photo-grid-title");
 const photoGridSubtitle = document.getElementById("photo-grid-subtitle");
 const backButton = document.getElementById("back-button");
 const lightbox = document.getElementById("lightbox");
-const lightboxImage = document.getElementById("lightbox-image");
+const lightboxContent = document.getElementById("lightbox-content");
+const lightboxTrack = document.getElementById("lightbox-track");
 const lightboxClose = document.getElementById("lightbox-close");
 const lightboxPrev = document.getElementById("lightbox-prev");
 const lightboxNext = document.getElementById("lightbox-next");
@@ -1531,7 +1532,57 @@ async function renderPhotoGrid() {
 }
 
 /**
- * Update lightbox image for the current photo index.
+ * The three slide panes: previous, current, and next.
+ */
+function lightboxSlides() {
+  return lightboxTrack.querySelectorAll(".lightbox-slide");
+}
+
+/**
+ * Point a slide's image at a photo. Side slides stay out of the accessibility tree.
+ */
+function assignLightboxSlide(slide, photo, album, decorative) {
+  const img = slide.querySelector("img");
+  if (!photo) {
+    img.removeAttribute("src");
+    img.alt = "";
+    img.hidden = true;
+    img.setAttribute("aria-hidden", "true");
+    return;
+  }
+
+  if (!lightboxSlideShows(img, photo)) {
+    img.src = photo.src;
+  }
+  img.hidden = false;
+  img.alt = decorative ? "" : getPhotoAlt(photo, album.name);
+  img.setAttribute("aria-hidden", decorative ? "true" : "false");
+}
+
+function lightboxSlideShows(img, photo) {
+  const current = img.getAttribute("src");
+  if (!current) {
+    return false;
+  }
+  try {
+    return (
+      new URL(current, window.location.href).href ===
+      new URL(photo.src, window.location.href).href
+    );
+  } catch {
+    return current === photo.src;
+  }
+}
+
+function markCurrentLightboxImage(slide) {
+  lightboxTrack.querySelectorAll("img").forEach((img) => {
+    img.removeAttribute("id");
+  });
+  slide.querySelector("img").id = "lightbox-image";
+}
+
+/**
+ * Update the three lightbox slides for the current photo index.
  */
 function updateLightboxContent() {
   const album = getCurrentAlbum();
@@ -1545,8 +1596,25 @@ function updateLightboxContent() {
     return;
   }
 
-  lightboxImage.src = photo.src;
-  lightboxImage.alt = getPhotoAlt(photo, album.name);
+  const slides = lightboxSlides();
+  const count = allPhotos.length;
+  const index = state.lightboxPhotoIndex;
+  const hasNeighbors = count > 1;
+
+  assignLightboxSlide(
+    slides[0],
+    hasNeighbors ? allPhotos[(index - 1 + count) % count] : null,
+    album,
+    true
+  );
+  assignLightboxSlide(slides[1], photo, album, false);
+  assignLightboxSlide(
+    slides[2],
+    hasNeighbors ? allPhotos[(index + 1) % count] : null,
+    album,
+    true
+  );
+  markCurrentLightboxImage(slides[1]);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1747,6 +1815,7 @@ function openLightbox(photoIndex) {
 
   state.lightboxOpen = true;
   state.lightboxPhotoIndex = photoIndex;
+  resetLightboxMotion();
   updateLightboxContent();
 
   lightbox.classList.add("lightbox--open");
@@ -1759,6 +1828,7 @@ function openLightbox(photoIndex) {
  */
 function closeLightbox() {
   state.lightboxOpen = false;
+  resetLightboxMotion();
   lightbox.classList.remove("lightbox--open");
   lightbox.setAttribute("aria-hidden", "true");
   updateBodyScrollLock();
@@ -1768,40 +1838,199 @@ function closeLightbox() {
  * Go to the previous photo in the lightbox (wraps around).
  */
 function lightboxPrevPhoto() {
-  const album = getCurrentAlbum();
-  if (!album) {
-    return;
-  }
-
-  const allPhotos = getAllPhotos(album);
-  state.lightboxPhotoIndex =
-    (state.lightboxPhotoIndex - 1 + allPhotos.length) % allPhotos.length;
-  updateLightboxContent();
+  slideLightbox(-1);
 }
 
 /**
  * Go to the next photo in the lightbox (wraps around).
  */
 function lightboxNextPhoto() {
-  const album = getCurrentAlbum();
-  if (!album) {
-    return;
-  }
-
-  const allPhotos = getAllPhotos(album);
-  state.lightboxPhotoIndex =
-    (state.lightboxPhotoIndex + 1) % allPhotos.length;
-  updateLightboxContent();
+  slideLightbox(1);
 }
 
 /* -------------------------------------------------------------------------- */
 /* Touch swipe handling for lightbox                                          */
 /* -------------------------------------------------------------------------- */
 
+const LIGHTBOX_SLIDE_MS = 450;
+
 let touchStartX = 0;
 let touchStartY = 0;
 /** True only for a single-finger swipe that has not been cancelled by pinch/zoom. */
 let swipeActive = false;
+/** Horizontal offset (px) of the filmstrip while a finger is down. */
+let lightboxDragX = 0;
+/** "h" once the gesture is a sideways swipe, "v" if it should be ignored. */
+let lightboxDragAxis = null;
+/** True while the filmstrip is animating to the next photo or back to rest. */
+let lightboxSlideLock = false;
+/** Extra arrow presses received during an animation, applied when it finishes. */
+let lightboxPendingShift = 0;
+/** Bumped to ignore a transitionend from a slide that was cancelled. */
+let lightboxSlideGeneration = 0;
+
+function prefersReducedLightboxMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function lightboxViewportWidth() {
+  return lightboxContent?.clientWidth || window.innerWidth;
+}
+
+function setLightboxTrackOffset(px, animate) {
+  lightboxTrack.classList.toggle("lightbox-track--animating", animate);
+  if (animate) {
+    lightboxTrack.style.transition = "";
+  } else {
+    lightboxTrack.style.transition = "none";
+  }
+  // Pixel offsets animate reliably. A mix of percentages and calc() does not.
+  const x = -lightboxViewportWidth() + px;
+  lightboxTrack.style.transform = `translate3d(${x}px, 0, 0)`;
+}
+
+/**
+ * Drop the slide animation and park the current photo in the center.
+ */
+function resetLightboxMotion() {
+  lightboxSlideGeneration += 1;
+  lightboxSlideLock = false;
+  lightboxPendingShift = 0;
+  lightboxDragX = 0;
+  lightboxDragAxis = null;
+  setLightboxTrackOffset(0, false);
+}
+
+/**
+ * After a slide finishes, rotate the panes so the photo now in view stays
+ * on the center element (already decoded) and load the new neighbor.
+ */
+function commitLightboxSlide(direction) {
+  const album = getCurrentAlbum();
+  if (!album) {
+    return;
+  }
+
+  const allPhotos = getAllPhotos(album);
+  const count = allPhotos.length;
+  if (count < 2) {
+    return;
+  }
+
+  state.lightboxPhotoIndex =
+    (state.lightboxPhotoIndex + direction + count) % count;
+
+  const slides = [...lightboxSlides()];
+  setLightboxTrackOffset(0, false);
+
+  if (direction > 0) {
+    lightboxTrack.appendChild(slides[0]);
+  } else {
+    lightboxTrack.insertBefore(slides[2], slides[0]);
+  }
+
+  const parked = lightboxSlides();
+  const index = state.lightboxPhotoIndex;
+  assignLightboxSlide(
+    parked[0],
+    allPhotos[(index - 1 + count) % count],
+    album,
+    true
+  );
+  assignLightboxSlide(parked[1], allPhotos[index], album, false);
+  assignLightboxSlide(parked[2], allPhotos[(index + 1) % count], album, true);
+  markCurrentLightboxImage(parked[1]);
+}
+
+function animateLightboxTo(px, onDone) {
+  const generation = ++lightboxSlideGeneration;
+  lightboxSlideLock = true;
+
+  lightboxTrack.style.transition = "none";
+  void lightboxTrack.offsetWidth;
+  lightboxTrack.style.transition = "";
+  lightboxTrack.classList.add("lightbox-track--animating");
+  const x = -lightboxViewportWidth() + px;
+  lightboxTrack.style.transform = `translate3d(${x}px, 0, 0)`;
+
+  let settled = false;
+  const finish = () => {
+    if (settled || generation !== lightboxSlideGeneration) {
+      return;
+    }
+    settled = true;
+    lightboxTrack.removeEventListener("transitionend", onEnd);
+    window.clearTimeout(timer);
+    onDone();
+    lightboxSlideLock = false;
+    lightboxDragX = 0;
+    if (lightboxPendingShift !== 0) {
+      const next = Math.sign(lightboxPendingShift);
+      lightboxPendingShift -= next;
+      slideLightbox(next);
+    }
+  };
+
+  const onEnd = (event) => {
+    if (event.target !== lightboxTrack || event.propertyName !== "transform") {
+      return;
+    }
+    finish();
+  };
+
+  lightboxTrack.addEventListener("transitionend", onEnd);
+  const timer = window.setTimeout(finish, LIGHTBOX_SLIDE_MS);
+}
+
+/**
+ * Slide to the previous (-1) or next (1) photo, then settle the filmstrip.
+ */
+function slideLightbox(direction) {
+  const album = getCurrentAlbum();
+  if (!album || !state.lightboxOpen) {
+    return;
+  }
+
+  const allPhotos = getAllPhotos(album);
+  if (allPhotos.length < 2 || direction === 0) {
+    return;
+  }
+
+  if (lightboxSlideLock) {
+    lightboxPendingShift += direction;
+    return;
+  }
+
+  if (prefersReducedLightboxMotion()) {
+    state.lightboxPhotoIndex =
+      (state.lightboxPhotoIndex + direction + allPhotos.length) %
+      allPhotos.length;
+    updateLightboxContent();
+    return;
+  }
+
+  const width = lightboxViewportWidth();
+  animateLightboxTo(direction > 0 ? -width : width, () => {
+    commitLightboxSlide(direction);
+  });
+}
+
+/**
+ * Ease the filmstrip back to the current photo.
+ */
+function snapLightboxBack() {
+  if (lightboxSlideLock) {
+    return;
+  }
+  if (lightboxDragX === 0 || prefersReducedLightboxMotion()) {
+    setLightboxTrackOffset(0, false);
+    lightboxDragX = 0;
+    return;
+  }
+  animateLightboxTo(0, () => {
+    setLightboxTrackOffset(0, false);
+  });
+}
 
 /**
  * Whether the page is currently pinch-zoomed (browser zoom).
@@ -1812,11 +2041,22 @@ function isLightboxZoomed() {
 }
 
 function cancelLightboxSwipe() {
+  const shouldSnap = swipeActive && lightboxDragAxis === "h" && lightboxDragX !== 0;
   swipeActive = false;
+  lightboxDragAxis = null;
+  if (shouldSnap) {
+    snapLightboxBack();
+  } else {
+    lightboxDragX = 0;
+  }
 }
 
 function handleTouchStart(event) {
-  if (!state.lightboxOpen) {
+  if (!state.lightboxOpen || lightboxSlideLock) {
+    return;
+  }
+
+  if (event.target.closest("button")) {
     return;
   }
 
@@ -1827,6 +2067,8 @@ function handleTouchStart(event) {
   }
 
   swipeActive = true;
+  lightboxDragAxis = null;
+  lightboxDragX = 0;
   touchStartX = event.touches[0].clientX;
   touchStartY = event.touches[0].clientY;
 }
@@ -1835,7 +2077,39 @@ function handleTouchMove(event) {
   // A second finger joined mid-gesture (pinch) — abort swipe
   if (event.touches.length > 1) {
     cancelLightboxSwipe();
+    return;
   }
+
+  if (!state.lightboxOpen || !swipeActive || isLightboxZoomed()) {
+    return;
+  }
+
+  const x = event.touches[0].clientX;
+  const y = event.touches[0].clientY;
+  const deltaX = x - touchStartX;
+  const deltaY = y - touchStartY;
+
+  if (!lightboxDragAxis) {
+    if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) {
+      return;
+    }
+    lightboxDragAxis = Math.abs(deltaX) > Math.abs(deltaY) ? "h" : "v";
+    if (lightboxDragAxis === "v") {
+      swipeActive = false;
+      return;
+    }
+  }
+
+  if (lightboxDragAxis !== "h" || prefersReducedLightboxMotion()) {
+    return;
+  }
+
+  event.preventDefault();
+
+  const album = getCurrentAlbum();
+  const count = album ? getAllPhotos(album).length : 0;
+  lightboxDragX = count < 2 ? deltaX * 0.28 : deltaX;
+  setLightboxTrackOffset(lightboxDragX, false);
 }
 
 function handleTouchEnd(event) {
@@ -1850,21 +2124,45 @@ function handleTouchEnd(event) {
     return;
   }
 
-  cancelLightboxSwipe();
-
   const deltaX = event.changedTouches[0].clientX - touchStartX;
   const deltaY = event.changedTouches[0].clientY - touchStartY;
+  const axis = lightboxDragAxis;
+  swipeActive = false;
+  lightboxDragAxis = null;
+
+  const width = lightboxViewportWidth();
+  const distance = Math.abs(lightboxDragX || deltaX);
+  const crossed =
+    distance > 56 || distance > width * 0.18;
 
   // Ignore mostly vertical swipes and small movements
-  if (Math.abs(deltaX) <= 50 || Math.abs(deltaX) < Math.abs(deltaY)) {
+  if (axis === "v" || !crossed || Math.abs(deltaX) < Math.abs(deltaY)) {
+    snapLightboxBack();
     return;
   }
 
-  if (deltaX > 0) {
-    lightboxPrevPhoto();
-  } else {
-    lightboxNextPhoto();
+  const album = getCurrentAlbum();
+  const count = album ? getAllPhotos(album).length : 0;
+  if (count < 2) {
+    snapLightboxBack();
+    return;
   }
+
+  if (prefersReducedLightboxMotion()) {
+    lightboxDragX = 0;
+    if (deltaX > 0) {
+      lightboxPrevPhoto();
+    } else {
+      lightboxNextPhoto();
+    }
+    return;
+  }
+
+  const direction = deltaX > 0 ? -1 : 1;
+  const target = direction > 0 ? -width : width;
+  animateLightboxTo(target, () => {
+    commitLightboxSlide(direction);
+  });
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1945,7 +2243,7 @@ function bindEvents() {
   navMenuBackdrop.addEventListener("click", closeMenu);
 
   lightbox.addEventListener("touchstart", handleTouchStart, { passive: true });
-  lightbox.addEventListener("touchmove", handleTouchMove, { passive: true });
+  lightbox.addEventListener("touchmove", handleTouchMove, { passive: false });
   lightbox.addEventListener("touchend", handleTouchEnd, { passive: true });
   lightbox.addEventListener("touchcancel", cancelLightboxSwipe, { passive: true });
 
@@ -1970,6 +2268,11 @@ function bindEvents() {
 
   window.addEventListener("hashchange", handleHashChange);
   window.addEventListener("scroll", onAlbumChromeScroll, { passive: true });
+  window.addEventListener("resize", () => {
+    if (state.lightboxOpen && !lightboxSlideLock && !swipeActive) {
+      setLightboxTrackOffset(lightboxDragX, false);
+    }
+  });
 }
 
 /* -------------------------------------------------------------------------- */

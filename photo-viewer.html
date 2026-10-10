@@ -189,16 +189,25 @@
       aria-label="Next photo"
     >→</button>
 
-    <div class="lightbox-content">
-      <img
-        id="lightbox-image"
-        class="lightbox-image"
-        src=""
-        alt=""
-        width="800"
-        height="600"
-        decoding="async"
-      />
+    <div id="lightbox-content" class="lightbox-content">
+      <div id="lightbox-track" class="lightbox-track">
+        <div class="lightbox-slide">
+          <img class="lightbox-image" alt="" draggable="false" decoding="async" />
+        </div>
+        <div class="lightbox-slide">
+          <img
+            id="lightbox-image"
+            class="lightbox-image"
+            src=""
+            alt=""
+            draggable="false"
+            decoding="async"
+          />
+        </div>
+        <div class="lightbox-slide">
+          <img class="lightbox-image" alt="" draggable="false" decoding="async" />
+        </div>
+      </div>
     </div>
   </div>
 
