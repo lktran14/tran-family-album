@@ -3,7 +3,7 @@
  * Caches all app assets for offline use.
  */
 
-const CACHE_NAME = "tran-family-album-v37";
+const CACHE_NAME = "tran-family-album-v38";
 
 const ASSETS_TO_CACHE = [
   "./",
@@ -231,6 +231,25 @@ const ASSETS_TO_CACHE = [
   "./photos/liens-graduation-2012/IMG_0643.jpg",
   "./photos/liens-graduation-2012/IMG_0648.jpg",
   "./photos/liens-graduation-2012/IMG_0649.jpg",
+  "./photos/egypt-1989/P1090017.jpg",
+  "./photos/egypt-1989/P1090019.jpg",
+  "./photos/egypt-1989/P1090020.jpg",
+  "./photos/egypt-1989/P1090024.jpg",
+  "./photos/egypt-1989/P1090025.jpg",
+  "./photos/egypt-1989/P1090026.jpg",
+  "./photos/egypt-1989/P1090031.jpg",
+  "./photos/egypt-1989/P1090032.jpg",
+  "./photos/egypt-1989/P1090034.jpg",
+  "./photos/egypt-1989/P1090036.jpg",
+  "./photos/egypt-1989/P1090040.jpg",
+  "./photos/egypt-1989/P1090047.jpg",
+  "./photos/egypt-1989/P1090053.jpg",
+  "./photos/egypt-1989/P1090058.jpg",
+  "./photos/egypt-1989/P1090059.jpg",
+  "./photos/egypt-1989/P1090142.jpg",
+  "./photos/egypt-1989/P1090143.jpg",
+  "./photos/egypt-1989/P1090147.jpg",
+  "./photos/egypt-1989/P1090152.jpg",
 ];
 
 self.addEventListener("install", (event) => {
