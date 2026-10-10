@@ -127,6 +127,7 @@ body {
   color: var(--text-primary);
   background-color: var(--bg-page);
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -1022,6 +1023,9 @@ html.unlocked .pin-lock {
 .lightbox {
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
   z-index: 1000;
   background: rgba(0, 0, 0, 0.92);
   display: flex;
@@ -1039,11 +1043,13 @@ html.unlocked .pin-lock {
 }
 
 .lightbox-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  flex: 1;
+  flex: 1 1 auto;
+  align-self: stretch;
   width: 100%;
   height: 100%;
   min-height: 0;
@@ -1059,10 +1065,12 @@ html.unlocked .pin-lock {
 }
 
 .lightbox-track {
-  align-self: flex-start;
-  flex: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
   display: flex;
-  height: 100%;
+  height: auto;
   width: 300%;
   transform: translate3d(-33.333333%, 0, 0);
   will-change: transform;
@@ -1073,23 +1081,24 @@ html.unlocked .pin-lock {
 }
 
 .lightbox-slide {
+  position: relative;
   flex: 0 0 33.333333%;
   width: 33.333333%;
   height: 100%;
   min-width: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  min-height: 0;
+  align-self: stretch;
 }
 
 .lightbox-image {
-  height: 100%;
+  position: absolute;
+  inset: 0;
   width: 100%;
-  max-height: 100%;
-  max-width: 100%;
-  min-height: 0;
-  min-width: 0;
+  height: 100%;
+  max-width: none;
+  max-height: none;
   object-fit: contain;
+  object-position: center;
   user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;

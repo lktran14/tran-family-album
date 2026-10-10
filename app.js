@@ -1815,11 +1815,11 @@ function openLightbox(photoIndex) {
 
   state.lightboxOpen = true;
   state.lightboxPhotoIndex = photoIndex;
-  resetLightboxMotion();
-  updateLightboxContent();
-
   lightbox.classList.add("lightbox--open");
   lightbox.setAttribute("aria-hidden", "false");
+  syncLightboxViewport();
+  resetLightboxMotion();
+  updateLightboxContent();
   updateBodyScrollLock();
 }
 
@@ -1828,7 +1828,9 @@ function openLightbox(photoIndex) {
  */
 function closeLightbox() {
   state.lightboxOpen = false;
+  window.clearTimeout(lightboxViewportTimer);
   resetLightboxMotion();
+  clearLightboxViewport();
   lightbox.classList.remove("lightbox--open");
   lightbox.setAttribute("aria-hidden", "true");
   updateBodyScrollLock();
@@ -1875,6 +1877,108 @@ function prefersReducedLightboxMotion() {
 
 function lightboxViewportWidth() {
   return lightboxContent?.clientWidth || window.innerWidth;
+}
+
+/**
+ * iPhone home-screen apps keep the portrait layout height after rotating to
+ * landscape, so a fixed full-screen viewer is taller than the visible screen
+ * and the centered photo sits under a black band. Pin the viewer to the
+ * visible viewport instead.
+ */
+function isIosDevice() {
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
+  );
+}
+
+function readLightboxViewport() {
+  const vv = window.visualViewport;
+  let width = vv?.width || window.innerWidth;
+  let height = vv?.height || window.innerHeight;
+  const top = vv?.offsetTop || 0;
+  const left = vv?.offsetLeft || 0;
+
+  if (isIosDevice()) {
+    const shortSide = Math.min(screen.width, screen.height);
+    const longSide = Math.max(screen.width, screen.height);
+    // Landscape even when iOS forgets to shrink the layout height: the
+    // viewport is wider than the phone's short side.
+    const landscape =
+      window.matchMedia("(orientation: landscape)").matches ||
+      (shortSide > 0 && width > shortSide + 1);
+    if (landscape && shortSide > 0 && height > shortSide) {
+      height = shortSide;
+    }
+    if (landscape && longSide > 0 && width > longSide) {
+      width = longSide;
+    }
+  }
+
+  return { width, height, top, left };
+}
+
+function syncLightboxViewport() {
+  if (!state.lightboxOpen || !lightbox) {
+    return;
+  }
+  const box = readLightboxViewport();
+  if (box.width < 1 || box.height < 1) {
+    return;
+  }
+  lightbox.style.top = `${box.top}px`;
+  lightbox.style.left = `${box.left}px`;
+  lightbox.style.width = `${box.width}px`;
+  lightbox.style.height = `${box.height}px`;
+  lightbox.style.right = "auto";
+  lightbox.style.bottom = "auto";
+
+  if (isIosDevice()) {
+    // Override the portrait-sized 100vh layout viewport while the photo is open.
+    const px = `${box.height}px`;
+    document.documentElement.style.height = px;
+    document.documentElement.style.minHeight = px;
+    document.body.style.height = px;
+    document.body.style.minHeight = px;
+  }
+}
+
+function clearLightboxViewport() {
+  if (!lightbox) {
+    return;
+  }
+  lightbox.style.top = "";
+  lightbox.style.left = "";
+  lightbox.style.width = "";
+  lightbox.style.height = "";
+  lightbox.style.right = "";
+  lightbox.style.bottom = "";
+  document.documentElement.style.height = "";
+  document.documentElement.style.minHeight = "";
+  document.body.style.height = "";
+  document.body.style.minHeight = "";
+}
+
+let lightboxViewportTimer = 0;
+
+function onLightboxViewportChange() {
+  if (!state.lightboxOpen || isLightboxZoomed()) {
+    return;
+  }
+  syncLightboxViewport();
+  if (!lightboxSlideLock && !swipeActive) {
+    setLightboxTrackOffset(lightboxDragX, false);
+  }
+}
+
+function scheduleLightboxViewportSync() {
+  if (!state.lightboxOpen) {
+    return;
+  }
+  onLightboxViewportChange();
+  window.clearTimeout(lightboxViewportTimer);
+  // iOS updates the visible height a few frames after the rotation event.
+  lightboxViewportTimer = window.setTimeout(onLightboxViewportChange, 400);
 }
 
 function setLightboxTrackOffset(px, animate) {
@@ -2268,11 +2372,12 @@ function bindEvents() {
 
   window.addEventListener("hashchange", handleHashChange);
   window.addEventListener("scroll", onAlbumChromeScroll, { passive: true });
-  window.addEventListener("resize", () => {
-    if (state.lightboxOpen && !lightboxSlideLock && !swipeActive) {
-      setLightboxTrackOffset(lightboxDragX, false);
-    }
-  });
+  window.addEventListener("resize", scheduleLightboxViewportSync);
+  window.addEventListener("orientationchange", scheduleLightboxViewportSync);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", scheduleLightboxViewportSync);
+    window.visualViewport.addEventListener("scroll", onLightboxViewportChange);
+  }
 }
 
 /* -------------------------------------------------------------------------- */
