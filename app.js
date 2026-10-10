@@ -247,6 +247,30 @@ const albums = [
   },
 
   {
+    id: "singapore-2013",
+    name: "Singapore 2013",
+    cover: "./photos/singapore-2013/IMG_2158.jpg",
+    listPreviewMain: "./photos/singapore-2013/IMG_2181.jpg",
+    photos: [
+      { src: "./photos/singapore-2013/IMG_2142.jpg", caption: "Raffles City, 19 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2158.jpg", caption: "Marina Bay Sands, 20 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2166.jpg", caption: "Christmas tree, Raffles City, 20 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2169.jpg", caption: "Christmas tree, 20 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2181.jpg", caption: "Singapore Botanic Gardens, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2218.jpg", caption: "Waterfall, National Orchid Garden, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2221.jpg", caption: "National Orchid Garden, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2222.jpg", caption: "National Orchid Garden, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2225.jpg", caption: "Fountain, National Orchid Garden, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2229.jpg", caption: "National Orchid Garden, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2237.jpg", caption: "Vanda orchids, National Orchid Garden, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2276.jpg", caption: "National Orchid Garden, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2282.jpg", caption: "Orchid arch, National Orchid Garden, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2287.jpg", caption: "National Orchid Garden, 21 November 2013" },
+      { src: "./photos/singapore-2013/IMG_2297.jpg", caption: "Noodle soup, Suntec City, 22 November 2013" },
+    ],
+  },
+
+  {
     id: "china-cruise-2010",
     name: "China Cruise 2010",
     cover: "./photos/china-cruise-2010/P1030473.jpg",
