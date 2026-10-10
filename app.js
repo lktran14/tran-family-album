@@ -322,6 +322,45 @@ const albums = [
   },
 
   {
+    id: "paris-london-rhyl-1986",
+    name: "Paris, London, Rhyl 1986",
+    cover: "./photos/paris-london-rhyl-1986/P1090186.png",
+    listPreviewMain: "./photos/paris-london-rhyl-1986/P1090176.png",
+    photos: [],
+    sections: [
+      {
+        heading: "Paris",
+        photos: [
+          { src: "./photos/paris-london-rhyl-1986/P1090176.png", caption: "Les Invalides, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090183.png", caption: "Les Invalides, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090182.png", caption: "Eiffel Tower, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090186.png", caption: "Eiffel Tower, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090184.png", caption: "Eiffel Tower, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090185.png", caption: "Trocadéro, 1986" },
+        ],
+      },
+      {
+        heading: "UK",
+        photos: [
+          { src: "./photos/paris-london-rhyl-1986/P1090194.png", caption: "London Zoo, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090201.png", caption: "London Zoo, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090206.png", caption: "Rhyl, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090207.png", caption: "Rhyl, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090208.png", caption: "Alton Towers, 1986" },
+          { src: "./photos/paris-london-rhyl-1986/P1090212.png", caption: "" },
+          { src: "./photos/paris-london-rhyl-1986/P1090213.png", caption: "" },
+        ],
+      },
+      {
+        heading: "Lucerne",
+        photos: [
+          { src: "./photos/paris-london-rhyl-1986/P1090240.png", caption: "Chapel Bridge, Lucerne, 1986" },
+        ],
+      },
+    ],
+  },
+
+  {
     id: "italy-1987",
     name: "Italy 1987",
     cover: "./photos/italy-1987/P1090214.png",

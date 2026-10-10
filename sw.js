@@ -3,7 +3,7 @@
  * Caches all app assets for offline use.
  */
 
-const CACHE_NAME = "tran-family-album-v34";
+const CACHE_NAME = "tran-family-album-v37";
 
 const ASSETS_TO_CACHE = [
   "./",
@@ -54,6 +54,20 @@ const ASSETS_TO_CACHE = [
   "./photos/wedding/P1080843.png",
   "./photos/wedding/P1080852.png",
   "./photos/wedding/P1080860.png",
+  "./photos/paris-london-rhyl-1986/P1090176.png",
+  "./photos/paris-london-rhyl-1986/P1090182.png",
+  "./photos/paris-london-rhyl-1986/P1090183.png",
+  "./photos/paris-london-rhyl-1986/P1090184.png",
+  "./photos/paris-london-rhyl-1986/P1090185.png",
+  "./photos/paris-london-rhyl-1986/P1090186.png",
+  "./photos/paris-london-rhyl-1986/P1090194.png",
+  "./photos/paris-london-rhyl-1986/P1090201.png",
+  "./photos/paris-london-rhyl-1986/P1090206.png",
+  "./photos/paris-london-rhyl-1986/P1090207.png",
+  "./photos/paris-london-rhyl-1986/P1090208.png",
+  "./photos/paris-london-rhyl-1986/P1090212.png",
+  "./photos/paris-london-rhyl-1986/P1090213.png",
+  "./photos/paris-london-rhyl-1986/P1090240.png",
   "./photos/italy-1987/P1000657.png",
   "./photos/italy-1987/P1090214.png",
   "./photos/italy-1987/P1090216.png",
