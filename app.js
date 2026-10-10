@@ -394,7 +394,7 @@ const albums = [
         ],
       },
       {
-        heading: "Ho Chi Minh City, 17–19 November",
+        heading: "Ho Chi Minh City",
         photos: [
           { src: "./photos/vietnam-2013/IMG_2106.jpg", caption: "Ho Chi Minh City, 17 November 2013" },
           { src: "./photos/vietnam-2013/IMG_2107.jpg", caption: "Saigon Central Post Office, 18 November 2013" },
@@ -850,12 +850,13 @@ function formatPhotoCount(count) {
 /**
  * Build a stable DOM id for a section heading within an album.
  */
-function getSectionDomId(albumId, heading) {
+function getSectionDomId(albumId, heading, occurrence = 0) {
   const slug = heading
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
-  return `section-${albumId}-${slug}`;
+  const suffix = occurrence > 0 ? `-${occurrence + 1}` : "";
+  return `section-${albumId}-${slug}${suffix}`;
 }
 
 /**
@@ -1177,11 +1178,15 @@ async function renderPhotoGrid() {
   );
 
   if (album.sections) {
+    const headingCounts = new Map();
     album.sections.forEach((section) => {
       if (section.heading) {
+        const occurrence = headingCounts.get(section.heading) || 0;
+        headingCounts.set(section.heading, occurrence + 1);
+
         const heading = document.createElement("h3");
         heading.className = "photo-grid-section-heading";
-        heading.id = getSectionDomId(album.id, section.heading);
+        heading.id = getSectionDomId(album.id, section.heading, occurrence);
 
         const title = document.createElement("span");
         title.className = "photo-grid-section-heading-title";
@@ -1281,11 +1286,11 @@ function navigateToHome() {
 /**
  * Navigate to a section within an album and scroll it into view.
  */
-function navigateToSection(albumId, sectionHeading) {
+function navigateToSection(albumId, sectionHeading, occurrence = 0) {
   closeMenu();
   closeLightbox();
 
-  const sectionId = getSectionDomId(albumId, sectionHeading);
+  const sectionId = getSectionDomId(albumId, sectionHeading, occurrence);
 
   if (state.currentAlbumId === albumId) {
     document.getElementById(sectionId)?.scrollIntoView({
@@ -1353,10 +1358,14 @@ function renderMenu() {
       const sublist = document.createElement("ul");
       sublist.className = "nav-menu-subsections";
 
+      const headingCounts = new Map();
       album.sections.forEach((section) => {
         if (!section.heading) {
           return;
         }
+
+        const occurrence = headingCounts.get(section.heading) || 0;
+        headingCounts.set(section.heading, occurrence + 1);
 
         const item = document.createElement("li");
         const subButton = document.createElement("button");
@@ -1364,7 +1373,7 @@ function renderMenu() {
         subButton.type = "button";
         subButton.textContent = section.heading;
         subButton.addEventListener("click", () => {
-          navigateToSection(album.id, section.heading);
+          navigateToSection(album.id, section.heading, occurrence);
         });
         item.appendChild(subButton);
         sublist.appendChild(item);
