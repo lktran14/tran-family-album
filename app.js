@@ -323,7 +323,7 @@ const albums = [
 
   {
     id: "paris-london-rhyl-1986",
-    name: "Paris, London, Rhyl 1986",
+    name: "Paris & UK 1986",
     cover: "./photos/paris-london-rhyl-1986/P1090186.png",
     listPreviewMain: "./photos/paris-london-rhyl-1986/P1090176.png",
     photos: [],
